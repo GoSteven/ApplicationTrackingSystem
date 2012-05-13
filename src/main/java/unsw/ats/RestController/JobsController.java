@@ -1,5 +1,12 @@
 package unsw.ats.RestController;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import unsw.ats.MongoService.JobService;
+import unsw.ats.entities.Job;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -17,8 +24,13 @@ import javax.ws.rs.core.Response;
  * or
  * http://localhost:8080/ApplicantTrackingSystem/rest/jobs/userId/all
  */
+@Component
 @Path("/jobs/{userId: [^/]*}") /*make userId can be empty*/
 public class JobsController {
+
+    @Autowired
+    private JobService service;
+
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)
@@ -82,6 +94,11 @@ public class JobsController {
         if (!validate(userId)) {
             return Response.status(401).entity("Unauthorized").build();
         }
+
+        Job job = new Job();
+        job.setJobTitle("jobTitle");
+        job.setJobDesc("jobDesc");
+        service.create(job);
         //TODO: search for the jobs
         return Response.status(200)
                 .entity("TODO: return searched jobs. title: " + userId + title + " from: " + from + " to: " + to + " state: " + state)
