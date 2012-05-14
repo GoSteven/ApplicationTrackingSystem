@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import unsw.ats.MongoService.JobService;
 import unsw.ats.entities.Job;
+import unsw.ats.entities.Recuriter;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -94,7 +95,6 @@ public class JobsController {
         if (!validate(userId)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-
         Job job = new Job();
         job.setJobTitle("jobTitle");
         job.setJobDesc("jobDesc");

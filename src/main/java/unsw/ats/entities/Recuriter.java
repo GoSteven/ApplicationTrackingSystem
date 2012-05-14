@@ -7,7 +7,7 @@ package unsw.ats.entities;
  * Time: 3:46 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Recruiter {
+public class Recuriter {
     private String userId;
     private String recruiterName;
     private String phoneNumber;

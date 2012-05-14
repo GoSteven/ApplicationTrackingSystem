@@ -1,4 +1,8 @@
 package unsw.ats.entities;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Calendar;
 
 /**
@@ -8,9 +12,14 @@ import java.util.Calendar;
  * Time: 4:04 PM
  * To change this template use File | Settings | File Templates.
  */
+@Document
 public class Job {
+    @Id
     private String jobId;
-    private String recruiterId;
+
+    @DBRef
+    private Recuriter recuriter;
+
     private String reviewerId_1;
     private String reviewerId_2;
     private String jobTitle;
@@ -25,14 +34,15 @@ public class Job {
     private boolean status;
 
 
-    public String getRecruiterId() {
-        return recruiterId;
+
+
+    public Recuriter getRecuriter() {
+        return recuriter;
     }
 
-    public void setRecruiterId(String recruiterId) {
-        this.recruiterId = recruiterId;
+    public void setRecuriter(Recuriter recuriter) {
+        this.recuriter = recuriter;
     }
-
     public String getReviewerId_1() {
         return reviewerId_1;
     }
