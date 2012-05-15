@@ -1,5 +1,7 @@
 package unsw.ats.entities;
 
+import org.springframework.data.annotation.Id;
+
 /**
  * Created with IntelliJ IDEA.
  * User: yousilin
@@ -8,7 +10,9 @@ package unsw.ats.entities;
  * To change this template use File | Settings | File Templates.
  */
 public class Recuriter {
+    @Id
     private String userId;
+
     private String recruiterName;
     private String phoneNumber;
     private String companyName;

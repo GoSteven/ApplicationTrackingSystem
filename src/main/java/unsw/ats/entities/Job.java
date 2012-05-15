@@ -20,6 +20,7 @@ public class Job {
     @DBRef
     private Recuriter recuriter;
 
+
     private String reviewerId_1;
     private String reviewerId_2;
     private String jobTitle;

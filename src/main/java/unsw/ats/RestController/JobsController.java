@@ -5,12 +5,16 @@ import org.springframework.stereotype.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import unsw.ats.MongoService.JobService;
+import unsw.ats.MongoService.RecuriterService;
+import unsw.ats.adapter.XmlAdapter;
 import unsw.ats.entities.Job;
 import unsw.ats.entities.Recuriter;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
 * Created with IntelliJ IDEA.
@@ -32,6 +36,9 @@ public class JobsController {
     @Autowired
     private JobService service;
 
+    @Autowired
+    private RecuriterService recuriterService;
+
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)
@@ -44,7 +51,17 @@ public class JobsController {
         if (!validate(userId)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-        //TODO: create new job
+        //TODO: set Job details
+        Job job = new Job();
+        job.setJobTitle("jobTitle");
+        job.setJobDesc("jobDesc");
+        //TODO: FIND THE RECURITER
+        Recuriter recuriter = recuriterService.readAll().get(0);
+
+        job.setRecuriter(recuriter);
+
+        service.create(job);
+
         return Response.status(200)
                 .entity("TODO: Contain the URI of the new job. userId: " + userId + " title: " + title + " content: " + content)
                 .build();
@@ -65,7 +82,9 @@ public class JobsController {
         if (!validate(userId)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-        //TODO: get the job, encode in json
+        String jobsXml = XmlAdapter.getJobsXML(service.readAll());
+        //TODO: get the job, use XQuery!
+        //http://www.ibm.com/developerworks/xml/library/x-xjavaxquery/
         return Response.status(200)
                 .entity("TODO: return the latest representation of the job. id: " + id)
                 .build();
@@ -84,7 +103,7 @@ public class JobsController {
      */
     @GET
     @Path("/all")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_XML)
     public  Response all(
             @PathParam("userId") String userId,
             @QueryParam(value = "title") String title,
@@ -95,13 +114,13 @@ public class JobsController {
         if (!validate(userId)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-        Job job = new Job();
-        job.setJobTitle("jobTitle");
-        job.setJobDesc("jobDesc");
-        service.create(job);
+
+        String jobsXml = XmlAdapter.getJobsXML(service.readAll());
+
         //TODO: search for the jobs
+        //http://www.ibm.com/developerworks/xml/library/x-xjavaxquery/
         return Response.status(200)
-                .entity("TODO: return searched jobs. title: " + userId + title + " from: " + from + " to: " + to + " state: " + state)
+                .entity(jobsXml)
                 .build();
 
     }
