@@ -9,6 +9,11 @@ import unsw.ats.entities.Recuriter;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -28,7 +33,7 @@ public class Controller {
     @GET
     @Path("/init")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response test() {
+    public Response test() throws ParseException {
         mongoTemplate.dropCollection("job");
         mongoTemplate.dropCollection("test");
         mongoTemplate.dropCollection("application");
@@ -45,18 +50,27 @@ public class Controller {
         jobJava.setJobId(UUID.randomUUID().toString());
         jobJava.setJobTitle("jobJava");
         jobJava.setJobDesc("This is a J2EE job");
+        DateFormat formatter ;
+        Date date ;
+        formatter = new SimpleDateFormat("dd-MMM-yy");
+        date = (Date)formatter.parse("11-June-12");
+        Calendar cal=Calendar.getInstance();
+        cal.setTime(date);
+        jobJava.setClosingDate(cal);
         jobJava.setRecuriter(recuriter);
 
         Job jobObjectiveC = new Job();
         jobObjectiveC.setJobId(UUID.randomUUID().toString());
         jobObjectiveC.setJobTitle("jobObjectiveC");
         jobObjectiveC.setJobDesc("This is a Objective C, iOS job");
+        jobObjectiveC.setClosingDate(cal);
         jobObjectiveC.setRecuriter(recuriter);
 
         Job jobPython = new Job();
         jobPython.setJobId(UUID.randomUUID().toString());
         jobPython.setJobTitle("jobPython");
         jobPython.setJobDesc("This is a python job");
+        jobPython.setClosingDate(cal);
         jobPython.setRecuriter(recuriter);
 
         // Insert to db

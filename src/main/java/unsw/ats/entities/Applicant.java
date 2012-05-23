@@ -1,5 +1,8 @@
 package unsw.ats.entities;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 /**
  * Created with IntelliJ IDEA.
  * User: mendy
@@ -7,7 +10,9 @@ package unsw.ats.entities;
  * Time: 4:03 PM
  * To change this template use File | Settings | File Templates.
  */
-public class applicant {
+@Document
+public class Applicant {
+    @Id
     private String applicantId;
     private String applicantName;
     private String phoneNumber;

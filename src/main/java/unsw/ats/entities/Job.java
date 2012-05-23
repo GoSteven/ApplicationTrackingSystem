@@ -19,10 +19,10 @@ public class Job {
 
     @DBRef
     private Recuriter recuriter;
-
-
-    private String reviewerId_1;
-    private String reviewerId_2;
+    @DBRef
+    private Reviewer reviewer1;
+    @DBRef
+    private Reviewer reviewer2;
     private String jobTitle;
     private String jobDesc;
     private float salary;
@@ -43,21 +43,6 @@ public class Job {
 
     public void setRecuriter(Recuriter recuriter) {
         this.recuriter = recuriter;
-    }
-    public String getReviewerId_1() {
-        return reviewerId_1;
-    }
-
-    public void setReviewerId_1(String reviewerId_1) {
-        this.reviewerId_1 = reviewerId_1;
-    }
-
-    public String getReviewerId_2() {
-        return reviewerId_2;
-    }
-
-    public void setReviewerId_2(String reviewerId_2) {
-        this.reviewerId_2 = reviewerId_2;
     }
 
     public String getJobId() {
