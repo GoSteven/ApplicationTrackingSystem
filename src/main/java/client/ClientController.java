@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,6 +30,7 @@ public class ClientController extends HttpServlet {
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response)
             throws IOException, ServletException {
+
         HttpSession session = request.getSession();
         /* set userId in session */
         String userId = (String)request.getParameter("userId");
@@ -46,15 +48,25 @@ public class ClientController extends HttpServlet {
         if ("init".equals(scope)) {
             String userType = (String)request.getParameter("userType");
             response.sendRedirect(userType + ".jsp");
-        } else if (scope == "createJob") {
-            Map parameterMap = request.getParameterMap();
+        } else if ("createJob".equals(scope)) {
+            Map<String, String[]> parameterMap = request.getParameterMap();
             Client client = Client.create();
             MultivaluedMap formData = new MultivaluedMapImpl();
             for (Object key : parameterMap.keySet()) {
-                formData.add((String)key, (String)parameterMap.get(key));
+                String keyString = (String)key;
+                String valueString = parameterMap.get(key)[0].toString();
+                formData.add(keyString, valueString);
             }
             WebResource webResource = client.resource(SERVICE_ADDRESS + "jobs/" + userId + "/create");
-            ClientResponse clientResponse = webResource.accept("application/xml").post(ClientResponse.class, formData);
+            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).post(ClientResponse.class, formData);
+            if (clientResponse.getStatus() == 200) {
+                request.setAttribute("successMessage", "Job Created successfully");
+                request.setAttribute("successHtml", "linkToNewJob");
+                request.getRequestDispatcher("success.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Job Creation failed");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
             System.out.print(request.getParameterMap());
         }
 

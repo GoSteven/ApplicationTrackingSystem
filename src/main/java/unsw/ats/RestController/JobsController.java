@@ -66,14 +66,14 @@ public class JobsController {
 
     @POST
     @Path("/create")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_XML)
     public Response create(
             @PathParam("userId") String userId,
-            @QueryParam(value = "title") String title,
-            @QueryParam(value = "jobDesc") String jobDesc,
-            @QueryParam(value = "salary") float salary,
-            @QueryParam(value = "location") String location,
-            @QueryParam(value = "closingDate")String closingDate
+            @FormParam(value = "title") String title,
+            @FormParam(value = "jobDesc") String jobDesc,
+            @FormParam(value = "salary") float salary,
+            @FormParam(value = "location") String location,
+            @FormParam(value = "closingDate")String closingDate
     ) throws ParseException {
         if (!validate(userId, 1)) {
             return Response.status(401).entity("Unauthorized").build();
@@ -85,7 +85,7 @@ public class JobsController {
         job.setSalary(salary);
         DateFormat formatter ;
         Date date ;
-        formatter = new SimpleDateFormat("dd-MMM-yy");
+        formatter = new SimpleDateFormat("dd-MMM-yyyy");
         date = (Date)formatter.parse(closingDate);
         Calendar cal=Calendar.getInstance();
         cal.setTime(date);

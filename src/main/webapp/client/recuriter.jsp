@@ -6,11 +6,11 @@
     <h2>Create Job</h2>
     <form action="controller" method="post">
         <input type="hidden" name="scope" value="createJob"/>
-        Job Title: <input name="jobTitle" type="text"/>
-        Description: <input name="jobDesc" type="text"/>
-        Salary: <input name="salary" type="text"/>
-        Location: <input name="location" type="text"/>
-        Closing Date: <input name="closingDate" type="text"/>
+        Job Title: <input name="title" type="text"/> <br/>
+        Description: <input name="jobDesc" type="text"/> <br/>
+        Salary: <input name="salary" type="text"/> <br/>
+        Location: <input name="location" type="text"/> <br/>
+        Closing Date: <input name="closingDate" type="text"/> <br/>
         <input type="submit" title="Submit"/>
     </form>
 

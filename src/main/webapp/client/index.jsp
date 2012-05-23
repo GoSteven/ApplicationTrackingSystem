@@ -3,6 +3,7 @@
     <title>Client - Application Tracking System</title>
 </head>
 <body>
+recuriter Id: 4917b6a7-20da-47a2-b8f4-181a771b51a1 <br/><br/>
     <form action="controller">
         <input type="hidden" name="scope" value="init"/>
         UserId: <input name="userId" type="text"/>
