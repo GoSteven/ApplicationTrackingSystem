@@ -43,5 +43,14 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+    
+    <servlet>
+        <servlet-name>client-serlvet</servlet-name>
+        <servlet-class>client.ClientController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>client-serlvet</servlet-name>
+        <url-pattern>/client/controller</url-pattern>
+    </servlet-mapping>
 
 </web-app>
