@@ -7,9 +7,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.sun.org.apache.xml.internal.dtm.ref.DTMNodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import unsw.ats.MongoService.ApplicantService;
 import unsw.ats.MongoService.JobService;
 import unsw.ats.MongoService.RecuriterService;
+import unsw.ats.MongoService.ReviewerService;
 import unsw.ats.adapter.XmlAdapter;
+import unsw.ats.entities.Applicant;
 import unsw.ats.entities.Job;
 import unsw.ats.entities.Recuriter;
 
@@ -17,10 +21,17 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.xpath.*;
-import javax.xml.xquery.XQDataSource;
+import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import  org.w3c.dom.*;
+import unsw.ats.entities.Reviewer;
+
+import javax.xml.parsers.*;
 
 /**
 * Created with IntelliJ IDEA.
@@ -34,6 +45,8 @@ import java.util.List;
  * http://localhost:8080/ApplicantTrackingSystem/rest/jobs//all
  * or
  * http://localhost:8080/ApplicantTrackingSystem/rest/jobs/userId/all
+ *
+ * 4917b6a7-20da-47a2-b8f4-181a771b51a1
  */
 @Component
 @Path("/jobs/{userId: [^/]*}") /*make userId can be empty*/
@@ -45,31 +58,48 @@ public class JobsController {
     @Autowired
     private RecuriterService recuriterService;
 
+    @Autowired
+    private ReviewerService reviewerService;
+
+    @Autowired
+    private ApplicantService applicantService;
+
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(
             @PathParam("userId") String userId,
             @QueryParam(value = "title") String title,
-            @QueryParam(value = "content") String content
+            @QueryParam(value = "jobDesc") String jobDesc,
+            @QueryParam(value = "salary") float salary,
+            @QueryParam(value = "location") String location,
+            @QueryParam(value = "status") boolean status,
+            @QueryParam(value = "closingDate")String closingDate
             //...
-    ) {
-        if (!validate(userId)) {
+    ) throws ParseException {
+        if (!validate(userId, 1)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-        //TODO: set Job details
         Job job = new Job();
-        job.setJobTitle("jobTitle");
-        job.setJobDesc("jobDesc");
-        //TODO: FIND THE RECURITER
-        Recuriter recuriter = recuriterService.readAll().get(0);
-
+        job.setJobId(UUID.randomUUID().toString());
+        job.setJobTitle(title);
+        job.setJobDesc(jobDesc);
+        job.setSalary(salary);
+        DateFormat formatter ;
+        Date date ;
+        formatter = new SimpleDateFormat("dd-MMM-yy");
+        date = (Date)formatter.parse(closingDate);
+        Calendar cal=Calendar.getInstance();
+        cal.setTime(date);
+        job.setClosingDate(cal);
+        job.setLocation(location);
+        job.setStatus(status);
+        Recuriter recuriter = findRecuriter(userId);
         job.setRecuriter(recuriter);
-
         service.create(job);
 
         return Response.status(200)
-                .entity("TODO: Contain the URI of the new job. userId: " + userId + " title: " + title + " content: " + content)
+                .entity("TODO: Contain the URI of the new job. userId: " + userId + " title: " + title + " content: " + title)
                 .build();
     }
 
@@ -84,12 +114,22 @@ public class JobsController {
     public Response detail(
             @PathParam("userId") String userId,
             @QueryParam(value = "id") String id
-    ) {
-        if (!validate(userId)) {
+    ) throws XPathExpressionException {
+        if (!validate(userId, 7)) {
             return Response.status(401).entity("Unauthorized").build();
         }
         String jobsXml = XmlAdapter.getJobsXML(service.readAll());
         //TODO: get the job, use XQuery!
+        XPathFactory factory = XPathFactory.newInstance();
+        XPath xPath = factory.newXPath();
+        XPathExpression expression = xPath.compile("//unsw.ats.entities.Job[jobId='" + id + "']//text()");
+        InputSource inputSource = new InputSource(new StringReader(jobsXml));
+        Object result = expression.evaluate(inputSource, XPathConstants.NODESET);
+        DTMNodeList nodes = (DTMNodeList) result;
+        for (int i = 0; i < nodes.getLength(); i ++) {
+            System.out.println(nodes.item(i).getNodeValue() + " " + nodes.item(i).getLocalName());
+        }
+
         //http://www.ibm.com/developerworks/xml/library/x-xjavaxquery/
         return Response.status(200)
                 .entity("TODO: return the latest representation of the job. id: " + id)
@@ -116,24 +156,21 @@ public class JobsController {
             @QueryParam(value = "from") String from,
             @QueryParam(value = "to") String to,
             @QueryParam(value = "state") String state
-    ) throws XPathExpressionException {
-        if (!validate(userId)) {
+    ) throws XPathExpressionException, ParserConfigurationException, IOException, SAXException {
+        if (!validate(userId, 7)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-
         String jobsXml = XmlAdapter.getJobsXML(service.readAll());
         XPathFactory factory = XPathFactory.newInstance();
         XPath xPath = factory.newXPath();
-        XPathExpression expression = xPath.compile("//list");
-
+        XPathExpression expression = xPath.compile("//unsw.ats.entities.Job/jobId/text()");
         InputSource inputSource = new InputSource(new StringReader(jobsXml));
         Object result = expression.evaluate(inputSource, XPathConstants.NODESET);
 
         DTMNodeList nodes = (DTMNodeList) result;
         for (int i = 0; i < nodes.getLength(); i ++) {
-             System.out.println(nodes.item(i).toString());
+             System.out.println(nodes.item(i).getNodeValue());
         }
-
         //TODO: search for the jobs
         //http://www.ibm.com/developerworks/xml/library/x-xjavaxquery/
         return Response.status(200)
@@ -142,7 +179,40 @@ public class JobsController {
 
     }
 
-    private boolean validate(String userId) {
-        return true;
+    private Recuriter findRecuriter(String userId){
+        for(Recuriter r: recuriterService.readAll()){
+            if(r.getUserId().equals(userId))
+                return r;
+        }
+        return null;
+    }
+
+    /**
+     * validate user from applicant, reviewer or recuriter
+     * @param userId
+     * @param type      001
+     * @return
+     */
+    private boolean validate(String userId, int type) {
+//        return true;
+        if ((type & 1) > 0) {
+            for (Recuriter r : recuriterService.readAll()) {
+                if (r.getUserId().equals(userId))
+                    return true;
+            }
+        }
+        if((type & 2) > 0 ){
+            for (Reviewer r: reviewerService.readAll()) {
+                if(r.getReviewerId().equals(userId))
+                    return true;
+            }
+        }
+        if((type & 4) > 0){
+            for(Applicant a: applicantService.readAll()) {
+                if(a.getApplicantId().equals(userId))
+                    return true;
+            }
+        }
+        return false;
     }
 }

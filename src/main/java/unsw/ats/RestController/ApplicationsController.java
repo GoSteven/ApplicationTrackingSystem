@@ -1,8 +1,13 @@
 package unsw.ats.RestController;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import unsw.ats.MongoService.ApplicationService;
+import unsw.ats.entities.Application;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,21 +18,31 @@ import javax.ws.rs.core.Response;
  */
 @Path("/applications/{userId: [^/]*}") /*make userId can be empty*/
 public class ApplicationsController {
+    @Autowired
+    private ApplicationService applicationService;
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(
             @PathParam("userId") String userId,
-            @QueryParam(value = "title") String title,
-            @QueryParam(value = "content") String content
+            @QueryParam(value = "jobId") String jobId,
+            @QueryParam(value = "briefBio") String briefBio,
+            @QueryParam(value = "salary") float salary
+//            @QueryParam(value = "status") String status
             //...
     ) {
         if (!validate(userId)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-        //TODO: create new application
+        Application application = new Application();
+        application.setApplicationId(userId);
+        application.setApplicantId(UUID.randomUUID().toString());
+        application.setJobId(jobId);
+        application.setBriefBio(briefBio);
+        application.setSalary(salary);
+        applicationService.create(application);
         return Response.status(200)
-                .entity("TODO: Contain the URI of the new application. userId: " + userId + " title: " + title + " content: " + content)
+                .entity("TODO: Contain the URI of the new application. userId: " + userId + " jobId: " + jobId + " briefBio: " + briefBio)
                 .build();
     }
 
@@ -46,7 +61,7 @@ public class ApplicationsController {
         if (!validate(userId)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-        //TODO: get the applicatino, encode in json
+        //TODO: get the application, encode in xml
         return Response.status(200)
                 .entity("TODO: return the latest representation of the application. id: " + id)
                 .build();
