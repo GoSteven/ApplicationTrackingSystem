@@ -25,6 +25,10 @@ public class ApplicationService {
         return applicationRepository.save(application);
     }
 
+    public Application findById(String applicationId){
+        return applicationRepository.findByApplicationId(applicationId);
+    }
+
     public List<Application> readAll() {
         return applicationRepository.findAll();
     }

@@ -2,6 +2,7 @@ package unsw.ats.RestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import unsw.ats.MongoService.ApplicationService;
+import unsw.ats.adapter.XmlAdapter;
 import unsw.ats.entities.Application;
 
 import javax.ws.rs.*;
@@ -22,7 +23,7 @@ public class ApplicationsController {
     private ApplicationService applicationService;
     @POST
     @Path("/create")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_XML)
     public Response create(
             @PathParam("userId") String userId,
             @QueryParam(value = "jobId") String jobId,
@@ -40,9 +41,9 @@ public class ApplicationsController {
         application.setJobId(jobId);
         application.setBriefBio(briefBio);
         application.setSalary(salary);
-        applicationService.create(application);
+        application = applicationService.create(application);
         return Response.status(200)
-                .entity("TODO: Contain the URI of the new application. userId: " + userId + " jobId: " + jobId + " briefBio: " + briefBio)
+                .entity("<create><status>success</status><applicationId>" + application.getApplicationId() + "</applicationId></create>")
                 .build();
     }
 
@@ -53,7 +54,7 @@ public class ApplicationsController {
      */
     @GET
     @Path("/detail")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_XML)
     public Response detail(
             @PathParam("userId") String userId,
             @QueryParam(value = "id") String id
@@ -62,14 +63,15 @@ public class ApplicationsController {
             return Response.status(401).entity("Unauthorized").build();
         }
         //TODO: get the application, encode in xml
+        String jobsXml = XmlAdapter.getJobXML(applicationService.findById(id));
         return Response.status(200)
-                .entity("TODO: return the latest representation of the application. id: " + id)
+                .entity(jobsXml)
                 .build();
     }
 
     @PUT
     @Path("/update")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_XML)
     public Response update(
             @PathParam("userId") String userId,
             @QueryParam("id") String id,
@@ -88,7 +90,7 @@ public class ApplicationsController {
 
     @DELETE
     @Path("/delete")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_XML)
     public Response delete(
             @PathParam("userId") String userId,
             @QueryParam("id") String id

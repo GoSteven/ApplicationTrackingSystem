@@ -90,14 +90,14 @@ public class JobsController {
         Calendar cal=Calendar.getInstance();
         cal.setTime(date);
         job.setClosingDate(cal);
-        job.setLocation(location);
+        job.setLocation(location);                http://www.youtube.com/watch?v=ir-tZS3TaxM&ob=av3e
         job.setStatus(true);
         Recuriter recuriter = findRecuriter(userId);
         job.setRecuriter(recuriter);
-        service.create(job);
+        job  = service.create(job);
 
         return Response.status(200)
-                .entity("TODO: Contain the URI of the new job. userId: " + userId + " title: " + title + " content: " + title)
+                .entity("<create><status>success</status><jobId>" + job.getJobId() + "</jobId></create>")
                 .build();
     }
 
@@ -108,7 +108,7 @@ public class JobsController {
      */
     @GET
     @Path("/detail")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_XML)
     public Response detail(
             @PathParam("userId") String userId,
             @QueryParam(value = "id") String id
@@ -116,21 +116,26 @@ public class JobsController {
         if (!validate(userId, 7)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-        String jobsXml = XmlAdapter.getJobsXML(service.readAll());
+        String jobsXml = XmlAdapter.getJobXML(service.findById(id));
         //TODO: get the job, use XQuery!
-        XPathFactory factory = XPathFactory.newInstance();
-        XPath xPath = factory.newXPath();
-        XPathExpression expression = xPath.compile("//unsw.ats.entities.Job[jobId='" + id + "']//text()");
-        InputSource inputSource = new InputSource(new StringReader(jobsXml));
-        Object result = expression.evaluate(inputSource, XPathConstants.NODESET);
-        DTMNodeList nodes = (DTMNodeList) result;
-        for (int i = 0; i < nodes.getLength(); i ++) {
-            System.out.println(nodes.item(i).getNodeValue() + " " + nodes.item(i).getLocalName());
-        }
+//        XPathFactory factory = XPathFactory.newInstance();
+//        XPath xPath = factory.newXPath();
+//        XPathExpression expression = xPath.compile("//unsw.ats.entities.Job[jobId='" + id + "']//text()");
+//        InputSource inputSource = new InputSource(new StringReader(jobsXml));
+//        Object result = expression.evaluate(inputSource, XPathConstants.NODESET);
+//        DTMNodeList nodes = (DTMNodeList) result;
+//        for (int i = 0; i < nodes.getLength(); i ++) {
+////            if(!nodes.item(i).getNodeValue().trim().equals("")) {
+//
+//                System.out.println(nodes.item(i).getNodeValue());
+////             + " @ " +
+////            nodes.item(i).getParentNode().getNodeName()
+////            }
+//        }
 
         //http://www.ibm.com/developerworks/xml/library/x-xjavaxquery/
         return Response.status(200)
-                .entity("TODO: return the latest representation of the job. id: " + id)
+                .entity(jobsXml)
                 .build();
     }
 
@@ -159,16 +164,16 @@ public class JobsController {
             return Response.status(401).entity("Unauthorized").build();
         }
         String jobsXml = XmlAdapter.getJobsXML(service.readAll());
-        XPathFactory factory = XPathFactory.newInstance();
-        XPath xPath = factory.newXPath();
-        XPathExpression expression = xPath.compile("//unsw.ats.entities.Job/jobId/text()");
-        InputSource inputSource = new InputSource(new StringReader(jobsXml));
-        Object result = expression.evaluate(inputSource, XPathConstants.NODESET);
-
-        DTMNodeList nodes = (DTMNodeList) result;
-        for (int i = 0; i < nodes.getLength(); i ++) {
-             System.out.println(nodes.item(i).getNodeValue());
-        }
+//        XPathFactory factory = XPathFactory.newInstance();
+//        XPath xPath = factory.newXPath();
+//        XPathExpression expression = xPath.compile("//unsw.ats.entities.Job/jobId/text()");
+//        InputSource inputSource = new InputSource(new StringReader(jobsXml));
+//        Object result = expression.evaluate(inputSource, XPathConstants.NODESET);
+//
+//        DTMNodeList nodes = (DTMNodeList) result;
+//        for (int i = 0; i < nodes.getLength(); i ++) {
+//             System.out.println(nodes.item(i).getNodeValue());
+//        }
         //TODO: search for the jobs
         //http://www.ibm.com/developerworks/xml/library/x-xjavaxquery/
         return Response.status(200)
