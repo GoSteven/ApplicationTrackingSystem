@@ -1,9 +1,12 @@
 package unsw.ats.RestController;
 
+import com.sun.org.apache.xml.internal.dtm.DTMIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import com.sun.org.apache.xml.internal.dtm.ref.DTMNodeList;
+import org.xml.sax.InputSource;
 import unsw.ats.MongoService.JobService;
 import unsw.ats.MongoService.RecuriterService;
 import unsw.ats.adapter.XmlAdapter;
@@ -13,6 +16,9 @@ import unsw.ats.entities.Recuriter;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.xpath.*;
+import javax.xml.xquery.XQDataSource;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,12 +116,23 @@ public class JobsController {
             @QueryParam(value = "from") String from,
             @QueryParam(value = "to") String to,
             @QueryParam(value = "state") String state
-    ) {
+    ) throws XPathExpressionException {
         if (!validate(userId)) {
             return Response.status(401).entity("Unauthorized").build();
         }
 
         String jobsXml = XmlAdapter.getJobsXML(service.readAll());
+        XPathFactory factory = XPathFactory.newInstance();
+        XPath xPath = factory.newXPath();
+        XPathExpression expression = xPath.compile("//list");
+
+        InputSource inputSource = new InputSource(new StringReader(jobsXml));
+        Object result = expression.evaluate(inputSource, XPathConstants.NODESET);
+
+        DTMNodeList nodes = (DTMNodeList) result;
+        for (int i = 0; i < nodes.getLength(); i ++) {
+             System.out.println(nodes.item(i).toString());
+        }
 
         //TODO: search for the jobs
         //http://www.ibm.com/developerworks/xml/library/x-xjavaxquery/
