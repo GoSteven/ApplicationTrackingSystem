@@ -73,9 +73,7 @@ public class JobsController {
             @QueryParam(value = "jobDesc") String jobDesc,
             @QueryParam(value = "salary") float salary,
             @QueryParam(value = "location") String location,
-            @QueryParam(value = "status") boolean status,
             @QueryParam(value = "closingDate")String closingDate
-            //...
     ) throws ParseException {
         if (!validate(userId, 1)) {
             return Response.status(401).entity("Unauthorized").build();
@@ -93,7 +91,7 @@ public class JobsController {
         cal.setTime(date);
         job.setClosingDate(cal);
         job.setLocation(location);
-        job.setStatus(status);
+        job.setStatus(true);
         Recuriter recuriter = findRecuriter(userId);
         job.setRecuriter(recuriter);
         service.create(job);
