@@ -33,6 +33,10 @@ public class JobService {
         return jobRepository.findAll();
     }
 
+    public Job findById(String jobId){
+        return jobRepository.findByJobId(jobId);
+    }
+
     public Job update(Job job) {
         Job existingJob = jobRepository.findByJobId(job.getJobId());
         if (existingJob == null) {
