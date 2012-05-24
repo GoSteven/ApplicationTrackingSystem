@@ -15,12 +15,12 @@
                     </tr>
                     <xsl:for-each select="list/unsw.ats.entities.Application">
                     <tr>
-                        <th><xsl:value-of select="applicationId" /></th>
-                        <th><xsl:value-of select="briefBio" /></th>
-                        <th><xsl:value-of select="salary" /></th>
-                        <th><xsl:value-of select="status" /></th>
-                        <th><xsl:value-of select="job/jobId" /></th>
-                        <th>Edit Application</th>
+                        <td><xsl:value-of select="applicationId" /></td>
+                        <td><xsl:value-of select="briefBio" /></td>
+                        <td><xsl:value-of select="salary" /></td>
+                        <td><xsl:value-of select="status" /></td>
+                        <td><xsl:value-of select="job/jobId" /></td>
+                        <td> <a href=controller?scope=editApplication&id=<xsl:value-of select="job/jobId"/> >Edit Application</xsl:value-of> </td>
                     </tr>
                     </xsl:for-each>
 >             </table>
