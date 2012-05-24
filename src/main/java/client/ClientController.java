@@ -33,7 +33,7 @@ public class ClientController extends HttpServlet {
 
         HttpSession session = request.getSession();
         /* set userId in session */
-        String userId = (String)request.getParameter("userId");
+        String userId = (String)request.getParameter("userId").trim();
         if (userId != null) {
             session.setAttribute("userId", userId);
         } else {
@@ -43,13 +43,13 @@ public class ClientController extends HttpServlet {
             throw new ServletException("userId cannot be null");
         }
 
-        String scope = (String)request.getParameter("scope");
+        String scope = (String)request.getParameter("scope").trim();
         if (scope == null) {
             response.sendRedirect("./");
         }
         if ("init".equals(scope)) {
         /* Init */
-            String userType = (String)request.getParameter("userType");
+            String userType = (String)request.getParameter("userType").trim();
             response.sendRedirect(userType + ".jsp");
         } else if ("createJob".equals(scope)) {
         /* create job */
@@ -89,7 +89,7 @@ public class ClientController extends HttpServlet {
                 request.setAttribute("successHtml", "linkToNewApplication");
                 request.getRequestDispatcher("success.jsp").forward(request, response);
             } else {
-                request.setAttribute("errorMessage", "Application Creation failed: " + clientResponse.getEntity(String.class).toString());
+                request.setAttribute("errorMessage", "Application Creation failed: " + clientResponse.getEntity(String.class));
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
         } else if ("myApplications".equals(scope)) {
@@ -102,10 +102,24 @@ public class ClientController extends HttpServlet {
                 request.setAttribute("myApplicationsXML", myApplicationsXML);
                 request.getRequestDispatcher("myApplications.jsp").forward(request, response);
             } else {
-                request.setAttribute("errorMessage", "Get my applications Failed: " + clientResponse.toString());
+                request.setAttribute("errorMessage", "Get my applications Failed: " + clientResponse.getEntity(String.class));
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
             client.destroy();
+        } else if ("editApplication".equals(scope)) {
+        /* edit application */
+            String applicationId = request.getParameter("applicationId").trim();
+            Client client = Client.create();
+            WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "detail?id=" + applicationId);
+            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+            if (clientResponse.getStatus() == 200) {
+                String applicationXML = clientResponse.getEntity(String.class);
+                request.setAttribute("applicationXML", applicationXML);
+                request.getRequestDispatcher("editApplication.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Get applications Failed: " + clientResponse.getEntity(String.class));
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
         }
 
 
