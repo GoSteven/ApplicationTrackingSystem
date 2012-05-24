@@ -1,5 +1,8 @@
 package unsw.ats.entities;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+
 /**
  * Created with IntelliJ IDEA.
  * User: mendy
@@ -8,8 +11,13 @@ package unsw.ats.entities;
  * To change this template use File | Settings | File Templates.
  */
 public class Application {
+    @Id
     private String applicationId;
-    private String applicantId;
+
+
+    @DBRef
+    private Applicant applicant;
+
     private String jobId;
     private String briefBio;
     private float salary;
@@ -31,6 +39,14 @@ public class Application {
      * finalIsAccepted = 0 rejected
      */
     private boolean finalIsAccepted;
+
+    public Applicant getApplicant() {
+        return applicant;
+    }
+
+    public void setApplicant(Applicant applicant) {
+        this.applicant = applicant;
+    }
 
     public String getReviewerRecommendations() {
         return reviewerRecommendations;
@@ -70,14 +86,6 @@ public class Application {
 
     public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
-    }
-
-    public String getApplicantId() {
-        return applicantId;
-    }
-
-    public void setApplicantId(String applicantId) {
-        this.applicantId = applicantId;
     }
 
     public String getJobId() {

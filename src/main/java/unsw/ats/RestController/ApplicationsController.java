@@ -8,6 +8,8 @@ import unsw.ats.entities.Application;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -26,18 +28,16 @@ public class ApplicationsController {
     @Produces(MediaType.APPLICATION_XML)
     public Response create(
             @PathParam("userId") String userId,
-            @QueryParam(value = "jobId") String jobId,
-            @QueryParam(value = "briefBio") String briefBio,
-            @QueryParam(value = "salary") float salary
-//            @QueryParam(value = "status") String status
-            //...
+            @FormParam(value = "jobId") String jobId,
+            @FormParam(value = "briefBio") String briefBio,
+            @FormParam(value = "salary") float salary
     ) {
         if (!validate(userId)) {
             return Response.status(401).entity("Unauthorized").build();
         }
         Application application = new Application();
         application.setApplicationId(userId);
-        application.setApplicantId(UUID.randomUUID().toString());
+        //TODO: Set Applicant
         application.setJobId(jobId);
         application.setBriefBio(briefBio);
         application.setSalary(salary);
@@ -63,10 +63,30 @@ public class ApplicationsController {
             return Response.status(401).entity("Unauthorized").build();
         }
         //TODO: get the application, encode in xml
-        String jobsXml = XmlAdapter.getJobXML(applicationService.findById(id));
+        String applicationXML = XmlAdapter.getApplicationXML(applicationService.findById(id));
         return Response.status(200)
-                .entity(jobsXml)
-                .build();
+                .entity(applicationXML).build();
+    }
+
+    @GET
+    @Path("/myApplications")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response myApplications(
+            @PathParam("userId") String userId
+    ) {
+        if (!validate(userId)) {
+            return Response.status(401).entity("Unauthorized").build();
+        }
+        List<Application> applications = applicationService.readAll();
+        List<Application> myApplications = new ArrayList<Application>();
+        for (Application application : applications) {
+            if (userId.endsWith(application.getApplicant().getApplicantId())) {
+                myApplications.add(application);
+            }
+        }
+        String myApplicationsXML = XmlAdapter.getApplicationsXML(myApplications);
+        return Response.status(200)
+                .entity(myApplicationsXML).build();
     }
 
     @PUT

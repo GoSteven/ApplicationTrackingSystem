@@ -52,17 +52,10 @@ public class ClientController extends HttpServlet {
         } else if ("createJob".equals(scope)) {
         /* create job */
             Map<String, String[]> parameterMap = request.getParameterMap();
-            Client client = Client.create();
-            MultivaluedMap formData = new MultivaluedMapImpl();
-            for (Object key : parameterMap.keySet()) {
-                String keyString = (String)key;
-                String valueString = parameterMap.get(key)[0].toString();
-                formData.add(keyString, valueString);
-            }
-            WebResource webResource = client.resource(SERVICE_ADDRESS + "jobs/" + userId + "/create");
-            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).post(ClientResponse.class, formData);
+            ClientResponse clientResponse = postRequest(SERVICE_ADDRESS + "jobs/" + userId + "/create", parameterMap);
             if (clientResponse.getStatus() == 200) {
                 request.setAttribute("successMessage", "Job Created successfully");
+                //TODO: linkToNewJob
                 request.setAttribute("successHtml", "linkToNewJob");
                 request.getRequestDispatcher("success.jsp").forward(request, response);
             } else {
@@ -83,6 +76,23 @@ public class ClientController extends HttpServlet {
                 request.setAttribute("errorMessage", "Get all jobs Failed: " + clientResponse.toString());
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
+        } else if ("createApplication".equals(scope)) {
+        /* Create application */
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            ClientResponse clientResponse = postRequest(SERVICE_ADDRESS + "jobs/" + userId + "/create", parameterMap);
+            if (clientResponse.getStatus() == 200) {
+                request.setAttribute("successMessage", "Application Created successfully");
+                //TODO: linkToNewApplication
+                request.setAttribute("successHtml", "linkToNewApplication");
+                request.getRequestDispatcher("success.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Application Creation failed");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+        } else if ("myApplications".equals(scope)) {
+        /* my applications */
+            Client client = Client.create();
+            WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/myApplications");
         }
 
 
@@ -101,6 +111,20 @@ public class ClientController extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
         }
+    }
+
+    private ClientResponse postRequest(String clientResource, Map<String, String[]> parameterMap) {
+        Client client = Client.create();
+        MultivaluedMap formData = new MultivaluedMapImpl();
+        for (Object key : parameterMap.keySet()) {
+            String keyString = (String)key;
+            String valueString = parameterMap.get(key)[0].toString();
+            formData.add(keyString, valueString);
+        }
+        WebResource webResource = client.resource(clientResource);
+        ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).post(ClientResponse.class, formData);
+        client.destroy();
+        return clientResponse;
     }
 
     @Override

@@ -25,9 +25,9 @@ public class XmlAdapter {
         return xStream.toXML(job);
     }
 
-    public static String getJobXML(Application job){
+    public static String getApplicationXML(Application application){
         XStream xStream = new XStream();
-        return xStream.toXML(job);
+        return xStream.toXML(application);
     }
 
     public static String getApplicationsXML(List<Application> applications) {
