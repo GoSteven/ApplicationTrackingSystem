@@ -11,14 +11,16 @@
                         <th>Expected Salary</th>
                         <th>Status</th>
                         <th>View Job Detail</th>
+                        <th>Edit</th>
                     </tr>
-                    <xsl:for-each select="list/unsw.ats.entities/Application">
+                    <xsl:for-each select="list/unsw.ats.entities.Application">
                     <tr>
                         <th><xsl:value-of select="applicationId" /></th>
                         <th><xsl:value-of select="briefBio" /></th>
                         <th><xsl:value-of select="salary" /></th>
                         <th><xsl:value-of select="status" /></th>
                         <th><xsl:value-of select="job/jobId" /></th>
+                        <th>Edit Application</th>
                     </tr>
                     </xsl:for-each>
 >             </table>
