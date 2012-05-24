@@ -33,7 +33,7 @@ public class ClientController extends HttpServlet {
 
         HttpSession session = request.getSession();
         /* set userId in session */
-        String userId = (String)request.getParameter("userId").trim();
+        String userId = (String)request.getParameter("userId");
         if (userId != null) {
             session.setAttribute("userId", userId);
         } else {
@@ -43,13 +43,13 @@ public class ClientController extends HttpServlet {
             throw new ServletException("userId cannot be null");
         }
 
-        String scope = (String)request.getParameter("scope").trim();
+        String scope = (String)request.getParameter("scope");
         if (scope == null) {
             response.sendRedirect("./");
         }
         if ("init".equals(scope)) {
         /* Init */
-            String userType = (String)request.getParameter("userType").trim();
+            String userType = (String)request.getParameter("userType");
             response.sendRedirect(userType + ".jsp");
         } else if ("createJob".equals(scope)) {
         /* create job */
@@ -108,9 +108,9 @@ public class ClientController extends HttpServlet {
             client.destroy();
         } else if ("editApplication".equals(scope)) {
         /* edit application */
-            String applicationId = request.getParameter("applicationId").trim();
+            String applicationId = request.getParameter("id");
             Client client = Client.create();
-            WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "detail?id=" + applicationId);
+            WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/detail?id=" + applicationId);
             ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
             if (clientResponse.getStatus() == 200) {
                 String applicationXML = clientResponse.getEntity(String.class);
