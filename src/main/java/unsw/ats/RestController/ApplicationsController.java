@@ -1,9 +1,12 @@
 package unsw.ats.RestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import unsw.ats.MongoService.ApplicationService;
+import unsw.ats.MongoService.JobService;
 import unsw.ats.adapter.XmlAdapter;
 import unsw.ats.entities.Application;
+import unsw.ats.entities.Job;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -19,10 +22,13 @@ import java.util.UUID;
  * Time: 5:05 PM
  * To change this template use File | Settings | File Templates.
  */
+@Component
 @Path("/applications/{userId: [^/]*}") /*make userId can be empty*/
 public class ApplicationsController {
     @Autowired
     private ApplicationService applicationService;
+    @Autowired
+    private JobService jobService;
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_XML)
@@ -38,7 +44,8 @@ public class ApplicationsController {
         Application application = new Application();
         application.setApplicationId(userId);
         //TODO: Set Applicant
-        application.setJobId(jobId);
+        Job job = jobService.findById(jobId);
+        application.setJob(job);
         application.setBriefBio(briefBio);
         application.setSalary(salary);
         application = applicationService.create(application);

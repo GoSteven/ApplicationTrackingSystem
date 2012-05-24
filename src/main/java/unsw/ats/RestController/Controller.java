@@ -3,8 +3,7 @@ package unsw.ats.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
-import unsw.ats.entities.Job;
-import unsw.ats.entities.Recuriter;
+import unsw.ats.entities.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -43,8 +42,17 @@ public class Controller {
         mongoTemplate.dropCollection("user");
 
         Recuriter recuriter = new Recuriter();
-        recuriter.setUserId(UUID.randomUUID().toString());
+        recuriter.setUserId("5e6d21e0-0132-4f3e-a868-7ce0de05f706");
         recuriter.setRecruiterName("StevenY");
+
+        Applicant applicant = new Applicant();
+        applicant.setApplicantId("3f9d6286-e131-42fe-a73f-d85f242bdf62");
+        applicant.setApplicantName("Mendy");
+
+        Reviewer reviewer = new Reviewer();
+        reviewer.setReviewerId("b8af6b41-0fda-495a-8deb-af539dddbe90");
+        reviewer.setReviewerName("Edison");
+
 
         Job jobJava = new Job();
         jobJava.setJobId(UUID.randomUUID().toString());
@@ -73,11 +81,20 @@ public class Controller {
         jobPython.setClosingDate(cal);
         jobPython.setRecuriter(recuriter);
 
+        Application application = new Application();
+        application.setApplicationId(UUID.randomUUID().toString());
+        application.setApplicant(applicant);
+        application.setBriefBio("I am a cute Rabbit and I can coding.");
+        application.setJob(jobJava);
+
         // Insert to db
         mongoTemplate.insert(jobJava, "job");
         mongoTemplate.insert(jobObjectiveC, "job");
         mongoTemplate.insert(jobPython, "job");
         mongoTemplate.insert(recuriter, "recuriter");
+        mongoTemplate.insert(applicant, "applicant");
+        mongoTemplate.insert(reviewer, "reviewer");
+        mongoTemplate.insert(application, "application");
 
         return Response.status(200).entity("Howdy, dude!").build();
     }

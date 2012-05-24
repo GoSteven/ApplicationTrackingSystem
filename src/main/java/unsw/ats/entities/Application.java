@@ -14,11 +14,12 @@ public class Application {
     @Id
     private String applicationId;
 
-
     @DBRef
     private Applicant applicant;
 
-    private String jobId;
+    @DBRef
+    private Job job;
+
     private String briefBio;
     private float salary;
     /**
@@ -39,6 +40,14 @@ public class Application {
      * finalIsAccepted = 0 rejected
      */
     private boolean finalIsAccepted;
+
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
 
     public Applicant getApplicant() {
         return applicant;
@@ -86,14 +95,6 @@ public class Application {
 
     public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
-    }
-
-    public String getJobId() {
-        return jobId;
-    }
-
-    public void setJobId(String jobId) {
-        this.jobId = jobId;
     }
 
     public String getBriefBio() {

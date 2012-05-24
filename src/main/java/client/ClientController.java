@@ -76,6 +76,7 @@ public class ClientController extends HttpServlet {
                 request.setAttribute("errorMessage", "Get all jobs Failed: " + clientResponse.toString());
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
+            client.destroy();
         } else if ("createApplication".equals(scope)) {
         /* Create application */
             Map<String, String[]> parameterMap = request.getParameterMap();
@@ -93,6 +94,16 @@ public class ClientController extends HttpServlet {
         /* my applications */
             Client client = Client.create();
             WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/myApplications");
+            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+            if (clientResponse.getStatus() == 200) {
+                String myApplicationsXML = clientResponse.getEntity(String.class);
+                request.setAttribute("myApplicationsXML", myApplicationsXML);
+                request.getRequestDispatcher("myApplications.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Get my applications Failed: " + clientResponse.toString());
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+            client.destroy();
         }
 
 
