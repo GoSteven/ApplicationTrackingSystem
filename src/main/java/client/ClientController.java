@@ -46,9 +46,11 @@ public class ClientController extends HttpServlet {
         String scope = (String)request.getParameter("scope");
 
         if ("init".equals(scope)) {
+        /* Init */
             String userType = (String)request.getParameter("userType");
             response.sendRedirect(userType + ".jsp");
         } else if ("createJob".equals(scope)) {
+        /* create job */
             Map<String, String[]> parameterMap = request.getParameterMap();
             Client client = Client.create();
             MultivaluedMap formData = new MultivaluedMapImpl();
@@ -68,20 +70,37 @@ public class ClientController extends HttpServlet {
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
             System.out.print(request.getParameterMap());
+        } else if ("viewAllJobs".equals(scope)) {
+        /* View all jobs */
+            Client client = Client.create();
+            WebResource webResource = client.resource(SERVICE_ADDRESS + "jobs/" + userId + "/all");
+            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+            if (clientResponse.getStatus() == 200) {
+                String allJobsXML = clientResponse.getEntity(String.class);
+                request.setAttribute("allJobsXML", allJobsXML);
+                request.getRequestDispatcher("allJobs.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Get all jobs Failed: " + clientResponse.toString());
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
         }
 
 
+        else {
 
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.println("<html>");
-        out.println("<head>");
-        out.println("<title>greeting</title>");
-        out.println("</head>");
-        out.println("<body>");
-        out.println("<h1>greeting</h1>");
-        out.println("</body>");
-        out.println("</html>");
+
+
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>greeting</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>greeting</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
     }
 
     @Override
