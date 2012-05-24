@@ -93,6 +93,9 @@ public class JobsController {
         job.setLocation(location);                http://www.youtube.com/watch?v=ir-tZS3TaxM&ob=av3e
         job.setStatus(true);
         Recuriter recuriter = findRecuriter(userId);
+        if (recuriter == null) {
+            return Response.status(412).entity("No such recuriter").build();
+        }
         job.setRecuriter(recuriter);
         job  = service.create(job);
 

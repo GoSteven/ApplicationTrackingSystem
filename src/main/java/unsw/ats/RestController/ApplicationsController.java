@@ -2,9 +2,11 @@ package unsw.ats.RestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import unsw.ats.MongoService.ApplicantService;
 import unsw.ats.MongoService.ApplicationService;
 import unsw.ats.MongoService.JobService;
 import unsw.ats.adapter.XmlAdapter;
+import unsw.ats.entities.Applicant;
 import unsw.ats.entities.Application;
 import unsw.ats.entities.Job;
 
@@ -29,6 +31,8 @@ public class ApplicationsController {
     private ApplicationService applicationService;
     @Autowired
     private JobService jobService;
+    @Autowired
+    private ApplicantService applicantService;
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_XML)
@@ -38,13 +42,29 @@ public class ApplicationsController {
             @FormParam(value = "briefBio") String briefBio,
             @FormParam(value = "salary") float salary
     ) {
+        /**
+         * Regarding HTTP error CODE , refer to : http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.10
+         */
         if (!validate(userId)) {
             return Response.status(401).entity("Unauthorized").build();
         }
         Application application = new Application();
+        Applicant applicant = applicantService.findById(userId);
+        if (applicant == null) {
+            return Response.status(412).entity("No such applicant").build();
+        }
+        application.setApplicant(applicant);
         application.setApplicationId(userId);
-        //TODO: Set Applicant
         Job job = jobService.findById(jobId);
+        if (applicant == null) {
+            return Response.status(412).entity("No such job").build();
+        }
+        /* cannot apply to the same job twice */
+        for (Application a : applicationService.readAll()) {
+            if (a.getJob().getJobId().equals(jobId) && a.getApplicant().getApplicantId().equals(userId)) {
+                return Response.status(412).entity("Cannot apply to the same job twice").build();
+            }
+        }
         application.setJob(job);
         application.setBriefBio(briefBio);
         application.setSalary(salary);

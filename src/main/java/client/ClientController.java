@@ -44,7 +44,9 @@ public class ClientController extends HttpServlet {
         }
 
         String scope = (String)request.getParameter("scope");
-
+        if (scope == null) {
+            response.sendRedirect("./");
+        }
         if ("init".equals(scope)) {
         /* Init */
             String userType = (String)request.getParameter("userType");
@@ -80,14 +82,14 @@ public class ClientController extends HttpServlet {
         } else if ("createApplication".equals(scope)) {
         /* Create application */
             Map<String, String[]> parameterMap = request.getParameterMap();
-            ClientResponse clientResponse = postRequest(SERVICE_ADDRESS + "jobs/" + userId + "/create", parameterMap);
+            ClientResponse clientResponse = postRequest(SERVICE_ADDRESS + "applications/" + userId + "/create", parameterMap);
             if (clientResponse.getStatus() == 200) {
                 request.setAttribute("successMessage", "Application Created successfully");
                 //TODO: linkToNewApplication
                 request.setAttribute("successHtml", "linkToNewApplication");
                 request.getRequestDispatcher("success.jsp").forward(request, response);
             } else {
-                request.setAttribute("errorMessage", "Application Creation failed");
+                request.setAttribute("errorMessage", "Application Creation failed: " + clientResponse.getEntity(String.class).toString());
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
         } else if ("myApplications".equals(scope)) {
