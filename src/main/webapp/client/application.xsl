@@ -21,7 +21,7 @@
                         <td><xsl:value-of select="status" /></td>
                         <td><xsl:value-of select="job/jobId" /></td>
                         <td>
-                            <a>
+                            <a href="{//job/jobId}">
                                 <xsl:value-of select="job/jobId" />
                             </a>
                         </td>
