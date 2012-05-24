@@ -32,4 +32,13 @@ public class ApplicationService {
     public List<Application> readAll() {
         return applicationRepository.findAll();
     }
+
+    public Application update(Application application) {
+        Application existingApplication = applicationRepository.findByApplicationId(application.getApplicationId());
+        if (existingApplication == null)
+            return null;
+        existingApplication.setBriefBio(application.getBriefBio());
+        existingApplication.setSalary(application.getSalary());
+        return applicationRepository.save(existingApplication);
+    }
 }

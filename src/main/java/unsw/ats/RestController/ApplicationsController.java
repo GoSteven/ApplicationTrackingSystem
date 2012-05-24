@@ -121,17 +121,26 @@ public class ApplicationsController {
     @Produces(MediaType.APPLICATION_XML)
     public Response update(
             @PathParam("userId") String userId,
-            @QueryParam("id") String id,
-            @QueryParam("title") String title,
-            @QueryParam(value = "content") String content
-            //...
+            @FormParam(value = "id") String applicationId,
+            @FormParam(value = "briefBio") String briefBio,
+            @FormParam(value = "salary") float salary
     ) {
         if (!validate(userId)) {
             return Response.status(401).entity("Unauthorized").build();
         }
+        Application application = applicationService.findById(applicationId);
+        if (application == null) {
+            return Response.status(412).entity("No such application").build();
+        }
+        if (!application.getApplicant().getApplicantId().equals(userId)) {
+            return Response.status(401).entity("Unauthorized: you are not authorized to update this application").build();
+        }
+        application.setBriefBio(briefBio);
+        application.setSalary(salary);
+        applicationService.update(application);
         //TODO: update by applicant or reviewer
         return Response.status(200)
-                .entity("TODO: return the latest representation of the application. id: " )
+                .entity(application.getApplicationId())
                 .build();
     }
 

@@ -54,7 +54,7 @@ public class ClientController extends HttpServlet {
         } else if ("createJob".equals(scope)) {
         /* create job */
             Map<String, String[]> parameterMap = request.getParameterMap();
-            ClientResponse clientResponse = postRequest(SERVICE_ADDRESS + "jobs/" + userId + "/create", parameterMap);
+            ClientResponse clientResponse = submitRequest(SERVICE_ADDRESS + "jobs/" + userId + "/create", parameterMap, "post");
             if (clientResponse.getStatus() == 200) {
                 request.setAttribute("successMessage", "Job Created successfully");
                 //TODO: linkToNewJob
@@ -82,7 +82,7 @@ public class ClientController extends HttpServlet {
         } else if ("createApplication".equals(scope)) {
         /* Create application */
             Map<String, String[]> parameterMap = request.getParameterMap();
-            ClientResponse clientResponse = postRequest(SERVICE_ADDRESS + "applications/" + userId + "/create", parameterMap);
+            ClientResponse clientResponse = submitRequest(SERVICE_ADDRESS + "applications/" + userId + "/create", parameterMap, "post");
             if (clientResponse.getStatus() == 200) {
                 request.setAttribute("successMessage", "Application Created successfully");
                 //TODO: linkToNewApplication
@@ -108,6 +108,7 @@ public class ClientController extends HttpServlet {
             client.destroy();
         } else if ("editApplication".equals(scope)) {
         /* edit application */
+            // http://localhost:8080/ApplicantTrackingSystem/client/controller?scope=editApplication&id=cd2edfde-9c2e-4dbc-8fa2-208eb9c707e0
             String applicationId = request.getParameter("id");
             Client client = Client.create();
             WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/detail?id=" + applicationId);
@@ -118,6 +119,18 @@ public class ClientController extends HttpServlet {
                 request.getRequestDispatcher("editApplication.jsp").forward(request, response);
             } else {
                 request.setAttribute("errorMessage", "Get applications Failed: " + clientResponse.getEntity(String.class));
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+        } else if ("updateApplication".endsWith(scope)) {
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            ClientResponse clientResponse = submitRequest(SERVICE_ADDRESS + "applications/" + userId + "/update", parameterMap, "put");
+            if (clientResponse.getStatus() == 200) {
+                request.setAttribute("successMessage", "Application Updated successfully");
+                //TODO: linkToNewApplication
+                request.setAttribute("successHtml", "linkToNewApplication");
+                request.getRequestDispatcher("success.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Application update failed: " + clientResponse.getEntity(String.class));
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
         }
@@ -140,7 +153,7 @@ public class ClientController extends HttpServlet {
         }
     }
 
-    private ClientResponse postRequest(String clientResource, Map<String, String[]> parameterMap) {
+    private ClientResponse submitRequest(String clientResource, Map<String, String[]> parameterMap, String method) {
         Client client = Client.create();
         MultivaluedMap formData = new MultivaluedMapImpl();
         for (Object key : parameterMap.keySet()) {
@@ -149,7 +162,12 @@ public class ClientController extends HttpServlet {
             formData.add(keyString, valueString);
         }
         WebResource webResource = client.resource(clientResource);
-        ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).post(ClientResponse.class, formData);
+        ClientResponse clientResponse = null;
+        if ("post".equalsIgnoreCase(method)) {
+            clientResponse = webResource.accept(MediaType.APPLICATION_XML).post(ClientResponse.class, formData);
+        } else if ("put".equalsIgnoreCase(method)) {
+            clientResponse = webResource.accept(MediaType.APPLICATION_XML).put(ClientResponse.class, formData);
+        }
         client.destroy();
         return clientResponse;
     }
