@@ -20,7 +20,12 @@
                         <td><xsl:value-of select="salary" /></td>
                         <td><xsl:value-of select="status" /></td>
                         <td><xsl:value-of select="job/jobId" /></td>
-                        <td> <a href=controller?scope=editApplication&id=<xsl:value-of select="job/jobId"/> >Edit Application</xsl:value-of> </td>
+                        <td>
+                            <a>
+                                <xsl:value-of select="job/jobId" />
+                            </a>
+                        </td>
+                        <!--<td> <a href=controller?scope=editApplication&id=<xsl:value-of select="job/jobId"/> >Edit Application</xsl:value-of> </td>-->
                     </tr>
                     </xsl:for-each>
 >             </table>
