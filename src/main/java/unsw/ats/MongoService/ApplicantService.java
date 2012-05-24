@@ -28,4 +28,8 @@ public class ApplicantService {
     public List<Applicant> readAll() {
         return applicantRepository.findAll();
     }
+
+    public Applicant findById(String applicantId) {
+        return applicantRepository.findByApplicantId(applicantId);
+    }
 }
