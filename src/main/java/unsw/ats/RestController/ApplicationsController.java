@@ -2,13 +2,9 @@ package unsw.ats.RestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import unsw.ats.MongoService.ApplicantService;
-import unsw.ats.MongoService.ApplicationService;
-import unsw.ats.MongoService.JobService;
+import unsw.ats.MongoService.*;
 import unsw.ats.adapter.XmlAdapter;
-import unsw.ats.entities.Applicant;
-import unsw.ats.entities.Application;
-import unsw.ats.entities.Job;
+import unsw.ats.entities.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -33,6 +29,12 @@ public class ApplicationsController {
     private JobService jobService;
     @Autowired
     private ApplicantService applicantService;
+
+    @Autowired
+    private RecuriterService recuriterService;
+
+    @Autowired
+    private ReviewerService reviewerService;
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_XML)
@@ -45,7 +47,7 @@ public class ApplicationsController {
         /**
          * Regarding HTTP error CODE , refer to : http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.10
          */
-        if (!validate(userId)) {
+        if (!validate(userId, 4)) {
             return Response.status(401).entity("Unauthorized").build();
         }
         Application application = new Application();
@@ -86,7 +88,8 @@ public class ApplicationsController {
             @PathParam("userId") String userId,
             @QueryParam(value = "id") String id
     ) {
-        if (!validate(userId)) {
+//        TODO
+        if (!validate(userId, 5)) {
             return Response.status(401).entity("Unauthorized").build();
         }
         //TODO: get the application, encode in xml
@@ -101,7 +104,8 @@ public class ApplicationsController {
     public Response myApplications(
             @PathParam("userId") String userId
     ) {
-        if (!validate(userId)) {
+//        TODO:
+        if (!validate(userId, 4)) {
             return Response.status(401).entity("Unauthorized").build();
         }
         List<Application> applications = applicationService.readAll();
@@ -117,6 +121,38 @@ public class ApplicationsController {
     }
 
     @PUT
+    @Path("/assign")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response assign(
+            @PathParam("userId") String userId,
+            @PathParam("id") String applicationId,
+            @PathParam("reviewerId1") String reviewerId1,
+            @PathParam("reviewerId2") String reviewerId2
+    ){
+        if(!validate(userId, 1)){
+            return Response.status(401).entity("Unauthorized").build();
+        }
+        Application application = applicationService.findById(applicationId);
+        if(application == null){
+            return Response.status(412).entity("No such application").build();
+        }
+        if(!application.getJob().getRecuriter().getUserId().equals(userId)){
+            return Response.status(401).entity("Unauthorized: you are not authorized to assign this job to the reviewer").build();
+        }
+        if(!validate(reviewerId1, 2)){
+            return Response.status(401).entity("This reviewer is not exist.").build();
+        }
+        if(!validate(reviewerId2, 2)){
+            return Response.status(401).entity("This reviewer is not exist.").build();
+        }
+        application.setReviewer1(reviewerService.findById(reviewerId1));
+        application.setReviewer2(reviewerService.findById(reviewerId2));
+        applicationService.update(application);
+        return Response.status(200).entity(application.getApplicationId()).build();
+
+    }
+
+    @PUT
     @Path("/update")
     @Produces(MediaType.APPLICATION_XML)
     public Response update(
@@ -125,7 +161,8 @@ public class ApplicationsController {
             @FormParam(value = "briefBio") String briefBio,
             @FormParam(value = "salary") float salary
     ) {
-        if (!validate(userId)) {
+//        TODO: who can update an application
+        if (!validate(userId, 4)) {
             return Response.status(401).entity("Unauthorized").build();
         }
         Application application = applicationService.findById(applicationId);
@@ -151,7 +188,8 @@ public class ApplicationsController {
             @PathParam("userId") String userId,
             @QueryParam("id") String id
     ) {
-        if (!validate(userId)) {
+//        TODO: who can delete an application
+        if (!validate(userId, 4)) {
             return Response.status(401).entity("Unauthorized").build();
         }
         //TODO: delete
@@ -160,8 +198,27 @@ public class ApplicationsController {
                 .build();
     }
 
-    private boolean validate(String userId) {
-        return true;
+    private boolean validate(String userId, int type) {
+//        return true;
+        if ((type & 1) > 0) {
+            for (Recuriter r : recuriterService.readAll()) {
+                if (r.getUserId().equals(userId))
+                    return true;
+            }
+        }
+        if((type & 2) > 0 ){
+            for (Reviewer r: reviewerService.readAll()) {
+                if(r.getReviewerId().equals(userId))
+                    return true;
+            }
+        }
+        if((type & 4) > 0){
+            for(Applicant a: applicantService.readAll()) {
+                if(a.getApplicantId().equals(userId))
+                    return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -11,5 +11,6 @@ import unsw.ats.entities.Reviewer;
  * To change this template use File | Settings | File Templates.
  */
 public interface ReviewerRepository extends MongoRepository<Reviewer, String> {
+    Reviewer findById(String reviewerId);
 
 }
