@@ -26,6 +26,10 @@ public class ReviewerService {
         return reviewerRepository.save(reviewer);
     }
 
+    public Reviewer findById(String reviewerId){
+        return reviewerRepository.findById(reviewerId);
+
+    }
     public List<Reviewer> readAll() {
         return reviewerRepository.findAll();
     }

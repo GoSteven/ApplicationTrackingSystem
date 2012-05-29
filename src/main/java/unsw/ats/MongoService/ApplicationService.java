@@ -37,6 +37,8 @@ public class ApplicationService {
         Application existingApplication = applicationRepository.findByApplicationId(application.getApplicationId());
         if (existingApplication == null)
             return null;
+        existingApplication.setReviewer1(application.getReviewer1());
+        existingApplication.setReviewer2(application.getReviewer2());
         existingApplication.setBriefBio(application.getBriefBio());
         existingApplication.setSalary(application.getSalary());
         return applicationRepository.save(existingApplication);
