@@ -19,6 +19,26 @@ public class Application {
 
     @DBRef
     private Job job;
+    @DBRef
+    private Reviewer reviewer1;
+    @DBRef
+    private Reviewer reviewer2;
+
+    public Reviewer getReviewer1() {
+        return reviewer1;
+    }
+
+    public void setReviewer1(Reviewer reviewer1) {
+        this.reviewer1 = reviewer1;
+    }
+
+    public Reviewer getReviewer2() {
+        return reviewer2;
+    }
+
+    public void setReviewer2(Reviewer reviewer2) {
+        this.reviewer2 = reviewer2;
+    }
 
     private String briefBio;
     private float salary;

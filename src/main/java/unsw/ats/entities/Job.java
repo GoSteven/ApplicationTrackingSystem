@@ -19,10 +19,6 @@ public class Job {
 
     @DBRef
     private Recuriter recuriter;
-    @DBRef
-    private Reviewer reviewer1;
-    @DBRef
-    private Reviewer reviewer2;
     private String jobTitle;
     private String jobDesc;
     private float salary;
