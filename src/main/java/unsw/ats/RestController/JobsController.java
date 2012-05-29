@@ -209,7 +209,7 @@ public class JobsController {
         }
         if((type & 2) > 0 ){
             for (Reviewer r: reviewerService.readAll()) {
-                if(r.getReviewerId().equals(userId))
+                if(r.getId().equals(userId))
                     return true;
             }
         }

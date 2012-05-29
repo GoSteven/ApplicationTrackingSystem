@@ -1,6 +1,7 @@
 package unsw.ats.entities;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,6 +10,7 @@ import org.springframework.data.annotation.Id;
  * Time: 3:46 PM
  * To change this template use File | Settings | File Templates.
  */
+@Document
 public class Recuriter {
     @Id
     private String userId;

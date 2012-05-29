@@ -50,7 +50,7 @@ public class Controller {
         applicant.setApplicantName("Mendy");
 
         Reviewer reviewer = new Reviewer();
-        reviewer.setReviewerId("b8af6b41-0fda-495a-8deb-af539dddbe90");
+        reviewer.setId("b8af6b41-0fda-495a-8deb-af539dddbe90");
         reviewer.setReviewerName("Edison");
 
 

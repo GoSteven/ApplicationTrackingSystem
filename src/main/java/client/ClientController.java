@@ -35,12 +35,13 @@ public class ClientController extends HttpServlet {
         /* set userId in session */
         String userId = (String)request.getParameter("userId");
         if (userId != null) {
-            session.setAttribute("userId", userId);
+            session.setAttribute("userId", userId.trim());
         } else {
             userId = (String)session.getAttribute("userId");
         }
         if (userId == null) {
-            throw new ServletException("userId cannot be null");
+            response.sendRedirect("./");
+            return;
         }
 
         String scope = (String)request.getParameter("scope");
@@ -50,8 +51,11 @@ public class ClientController extends HttpServlet {
         if ("init".equals(scope)) {
         /* Init */
             String userType = (String)request.getParameter("userType");
-            response.sendRedirect(userType + ".jsp");
-        } else if ("createJob".equals(scope)) {
+            response.sendRedirect("controller?scope=" + userType);
+        } else if ("recuriter".equals(scope) || "reviewer".equals(scope) || "applicant".equals(scope)) {
+            request.getRequestDispatcher(scope + ".jsp").forward(request, response);
+        }
+        else if ("createJob".equals(scope)) {
         /* create job */
             Map<String, String[]> parameterMap = request.getParameterMap();
             ClientResponse clientResponse = submitRequest(SERVICE_ADDRESS + "jobs/" + userId + "/create", parameterMap, "post");

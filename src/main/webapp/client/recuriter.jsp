@@ -15,6 +15,6 @@
     </form>
 
     <h2>Assign Applications</h2>
-    ....
+    <a href="controller?scope=myApplications">View my applications</a>
 </body>
 </html>

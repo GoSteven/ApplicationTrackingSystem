@@ -105,16 +105,21 @@ public class ApplicationsController {
             @PathParam("userId") String userId
     ) {
 //        TODO:
-        if (!validate(userId, 4)) {
+        if (!validate(userId, 4 + 1)) {
             return Response.status(401).entity("Unauthorized").build();
         }
         List<Application> applications = applicationService.readAll();
         List<Application> myApplications = new ArrayList<Application>();
         for (Application application : applications) {
             if (userId.endsWith(application.getApplicant().getApplicantId())) {
+            /* For applicants, display his applications*/
+                myApplications.add(application);
+            } else if (userId.endsWith(application.getJob().getRecuriter().getUserId())) {
+            /* For Recuriters, display the applications, which apply for his job */
                 myApplications.add(application);
             }
         }
+
         String myApplicationsXML = XmlAdapter.getApplicationsXML(myApplications);
         return Response.status(200)
                 .entity(myApplicationsXML).build();
@@ -208,7 +213,7 @@ public class ApplicationsController {
         }
         if((type & 2) > 0 ){
             for (Reviewer r: reviewerService.readAll()) {
-                if(r.getReviewerId().equals(userId))
+                if(r.getId().equals(userId))
                     return true;
             }
         }

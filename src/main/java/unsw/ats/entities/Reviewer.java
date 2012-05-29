@@ -13,15 +13,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Reviewer {
     @Id
-    private String reviewerId;
+    private String id;
+
     private String reviewerName;
 
-    public String getReviewerId() {
-        return reviewerId;
+    public String getId() {
+        return id;
     }
 
-    public void setReviewerId(String reviewerId) {
-        this.reviewerId = reviewerId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getReviewerName() {

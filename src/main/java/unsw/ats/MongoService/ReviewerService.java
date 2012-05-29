@@ -22,7 +22,7 @@ public class ReviewerService {
     private ReviewerRepository reviewerRepository;
 
     public Reviewer create(Reviewer reviewer) {
-        reviewer.setReviewerId(UUID.randomUUID().toString());
+        reviewer.setId(UUID.randomUUID().toString());
         return reviewerRepository.save(reviewer);
     }
 

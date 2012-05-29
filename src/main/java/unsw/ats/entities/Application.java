@@ -2,6 +2,7 @@ package unsw.ats.entities;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
  * Time: 4:04 PM
  * To change this template use File | Settings | File Templates.
  */
+@Document
 public class Application {
     @Id
     private String applicationId;
