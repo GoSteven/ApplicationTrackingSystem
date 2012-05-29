@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import unsw.ats.entities.Job;
 import unsw.ats.repository.JobRepository;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 

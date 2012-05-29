@@ -166,7 +166,14 @@ public class JobsController {
         if (!validate(userId, 7)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-        String jobsXml = XmlAdapter.getJobsXML(service.readAll());
+        List<Job> allJobs = service.readAll();
+        List<Job> shownJob = new ArrayList<Job>();
+        for(Job job: allJobs){
+            if(job.getClosingDate().after(new Date())){
+                shownJob.add(job);
+            }
+        }
+        String jobsXml = XmlAdapter.getJobsXML(shownJob);
 //        XPathFactory factory = XPathFactory.newInstance();
 //        XPath xPath = factory.newXPath();
 //        XPathExpression expression = xPath.compile("//unsw.ats.entities.Job/jobId/text()");
