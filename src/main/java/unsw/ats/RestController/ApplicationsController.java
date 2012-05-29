@@ -220,7 +220,7 @@ public class ApplicationsController {
         if(application == null){
             return Response.status(412).entity("No such application").build();
         }
-        if(application.getReviewer1().getReviewerId().equals(reviewerId)){
+        if(application.getReviewer1().getId().equals(reviewerId)){
             application.setReviewer1IsAccepted(decision);
             application.setReviewer1Recommendations(recommendation);
             if(!(application.getReviewer2() == null)){
@@ -228,7 +228,7 @@ public class ApplicationsController {
             }
             applicationService.review1(application);
             return Response.status(200).entity(application.getApplicationId()).build();
-        }else if(application.getReviewer2().getReviewerId().equals(reviewerId)){
+        }else if(application.getReviewer2().getId().equals(reviewerId)){
             application.setReviewer2IsAccepted(decision);
             application.setReviewer2Recommendations(recommendation);
             if(!(application.getReviewer1() == null)){
