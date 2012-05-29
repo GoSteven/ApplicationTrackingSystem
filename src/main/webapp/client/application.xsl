@@ -11,7 +11,7 @@
                         <th>Expected Salary</th>
                         <th>Status</th>
                         <th>View Job Detail</th>
-                        <th>Edit</th>
+                        <th></th>
                     </tr>
                     <xsl:for-each select="list/unsw.ats.entities.Application">
                     <tr>
@@ -19,12 +19,17 @@
                         <td><xsl:value-of select="briefBio" /></td>
                         <td><xsl:value-of select="salary" /></td>
                         <td><xsl:value-of select="status" /></td>
-                        <td><xsl:value-of select="job/jobId" /></td>
                         <td>
-                            <a href="{//job/jobId}">
-                                <xsl:value-of select="job/jobId" />
+                            <a href="controller?scope=viewAllJobs">
+                                <xsl:value-of select="job/jobTitle" />
                             </a>
                         </td>
+                        <td>
+                            <a href="controller?scope=editApplication&amp;id={//applicationId}">
+                                Edit
+                            </a>
+                        </td>
+
                         <!--<td> <a href=controller?scope=editApplication&id=<xsl:value-of select="job/jobId"/> >Edit Application</xsl:value-of> </td>-->
                     </tr>
                     </xsl:for-each>
