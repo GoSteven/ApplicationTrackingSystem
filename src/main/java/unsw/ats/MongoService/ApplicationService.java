@@ -39,8 +39,36 @@ public class ApplicationService {
             return null;
         existingApplication.setReviewer1(application.getReviewer1());
         existingApplication.setReviewer2(application.getReviewer2());
+        existingApplication.setStatus(application.getStatus());
         existingApplication.setBriefBio(application.getBriefBio());
         existingApplication.setSalary(application.getSalary());
+        return applicationRepository.save(existingApplication);
+    }
+
+    public Application review1(Application application){
+        Application existingApplication = applicationRepository.findByApplicationId(application.getApplicationId());
+        if(existingApplication == null)
+            return null;
+        existingApplication.setReviewer1IsAccepted(application.isReviewer1IsAccepted());
+        existingApplication.setReviewer1Recommendations(application.getReviewer1Recommendations());
+        return applicationRepository.save(existingApplication);
+    }
+
+    public Application review2(Application application){
+        Application existingApplication = applicationRepository.findByApplicationId(application.getApplicationId());
+        if(existingApplication == null)
+            return null;
+        existingApplication.setReviewer2IsAccepted(application.isReviewer2IsAccepted());
+        existingApplication.setReviewer2Recommendations(application.isReviewer2Recommendations());
+        return applicationRepository.save(existingApplication);
+    }
+
+    public Application finalDec(Application application){
+        Application existingApplication = applicationRepository.findByApplicationId(application.getApplicationId());
+        if(existingApplication == null)
+            return null;
+        existingApplication.setFinalIsAccepted(application.isFinalIsAccepted());
+        existingApplication.setStatus(application.getStatus());
         return applicationRepository.save(existingApplication);
     }
 }

@@ -46,15 +46,18 @@ public class Application {
      * status = 0   application received
      * status = 1   application in review
      * status = 2   decision made by reviewer
-     * status = 3   final decision
+     * status = 3   final decision made
      */
-    private int status;
+    private String status;
     /**
      * reviewerIsAccepted = 1  accepted
      * reviewerIsAcceoted = 0  rejected
      */
-    private boolean reviewerIsAccepted;
-    private String reviewerRecommendations;
+    private boolean reviewer1IsAccepted;
+    private String reviewer1Recommendations;
+
+    private boolean reviewer2IsAccepted;
+    private String reviewer2Recommendations;
     /**
      * finalIsAccepted = 1 accepted
      * finalIsAccepted = 0 rejected
@@ -77,28 +80,45 @@ public class Application {
         this.applicant = applicant;
     }
 
-    public String getReviewerRecommendations() {
-        return reviewerRecommendations;
-    }
 
-    public void setReviewerRecommendations(String reviewerRecommendations) {
-        this.reviewerRecommendations = reviewerRecommendations;
-    }
-
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public boolean isReviewerIsAccepted() {
-        return reviewerIsAccepted;
+    public boolean isReviewer1IsAccepted() {
+        return reviewer1IsAccepted;
     }
 
-    public void setReviewerIsAccepted(boolean reviewerIsAccepted) {
-        this.reviewerIsAccepted = reviewerIsAccepted;
+    public void setReviewer1IsAccepted(boolean reviewer1IsAccepted) {
+        this.reviewer1IsAccepted = reviewer1IsAccepted;
+    }
+
+    public String getReviewer1Recommendations() {
+        return reviewer1Recommendations;
+    }
+
+    public void setReviewer1Recommendations(String reviewer1Recommendations) {
+        this.reviewer1Recommendations = reviewer1Recommendations;
+    }
+
+    public boolean isReviewer2IsAccepted() {
+        return reviewer2IsAccepted;
+    }
+
+    public void setReviewer2IsAccepted(boolean reviewer2IsAccepted) {
+        this.reviewer2IsAccepted = reviewer2IsAccepted;
+    }
+
+    public String isReviewer2Recommendations() {
+        return reviewer2Recommendations;
+    }
+
+    public void setReviewer2Recommendations(String reviewer2Recommendations) {
+        this.reviewer2Recommendations = reviewer2Recommendations;
     }
 
     public boolean isFinalIsAccepted() {

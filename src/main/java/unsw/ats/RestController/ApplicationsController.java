@@ -70,6 +70,7 @@ public class ApplicationsController {
         application.setJob(job);
         application.setBriefBio(briefBio);
         application.setSalary(salary);
+        application.setStatus("Application Received");
         application = applicationService.create(application);
         return Response.status(200)
                 .entity("<create><status>success</status><applicationId>" + application.getApplicationId() + "</applicationId></create>")
@@ -147,6 +148,7 @@ public class ApplicationsController {
         }
         application.setReviewer1(reviewerService.findById(reviewerId1));
         application.setReviewer2(reviewerService.findById(reviewerId2));
+        application.setStatus("application in review");
         applicationService.update(application);
         return Response.status(200).entity(application.getApplicationId()).build();
 
@@ -161,10 +163,6 @@ public class ApplicationsController {
             @FormParam(value = "briefBio") String briefBio,
             @FormParam(value = "salary") float salary
     ) {
-//        TODO: who can update an application
-        if (!validate(userId, 4)) {
-            return Response.status(401).entity("Unauthorized").build();
-        }
         Application application = applicationService.findById(applicationId);
         if (application == null) {
             return Response.status(412).entity("No such application").build();
@@ -175,10 +173,69 @@ public class ApplicationsController {
         application.setBriefBio(briefBio);
         application.setSalary(salary);
         applicationService.update(application);
-        //TODO: update by applicant or reviewer
         return Response.status(200)
                 .entity(application.getApplicationId())
                 .build();
+    }
+
+    @PUT
+    @Path("/finalDecision")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response finalDecision(
+            @PathParam("recuriterId") String recuriterId,
+            @PathParam("applicationId") String applicationId,
+            @PathParam("decision") boolean decision
+    ){
+        Application application = applicationService.findById(applicationId);
+        if(application == null){
+            return Response.status(412).entity("No such application").build();
+        }
+        if(!application.getJob().getRecuriter().getUserId().equals(recuriterId)) {
+            return Response.status(401).entity("Unauthorized").build();
+        }
+        application.setFinalIsAccepted(decision);
+        application.setStatus("final decision made");
+        applicationService.finalDec(application);
+        return Response.status(200)
+                .entity(application.getApplicationId())
+                .build();
+
+    }
+
+    @PUT
+    @Path("/review")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response review(
+            @PathParam("reviewerId")String reviewerId,
+            @PathParam("applicationId") String applicationId,
+            @PathParam("decision") boolean decision,
+            @PathParam("recommendation") String recommendation
+    ){
+        Application application = applicationService.findById(applicationId);
+        if(application == null){
+            return Response.status(412).entity("No such application").build();
+        }
+        if(application.getReviewer1().getReviewerId().equals(reviewerId)){
+            application.setReviewer1IsAccepted(decision);
+            application.setReviewer1Recommendations(recommendation);
+            if(!(application.getReviewer2() == null)){
+                application.setStatus("decision made by reviewer");
+            }
+            applicationService.review1(application);
+            return Response.status(200).entity(application.getApplicationId()).build();
+        }else if(application.getReviewer2().getReviewerId().equals(reviewerId)){
+            application.setReviewer2IsAccepted(decision);
+            application.setReviewer2Recommendations(recommendation);
+            if(!(application.getReviewer1() == null)){
+                application.setStatus("decision made by reviewer");
+            }
+            applicationService.review2(application);
+            return Response.status(200)
+                    .entity(application.getApplicationId())
+                    .build();
+        } else {
+            return Response.status(401).entity("Unauthorized").build();
+        }
     }
 
     @DELETE
