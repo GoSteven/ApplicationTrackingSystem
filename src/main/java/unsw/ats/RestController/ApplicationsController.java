@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import unsw.ats.MongoService.*;
 import unsw.ats.adapter.XmlAdapter;
+import unsw.ats.common.Const;
 import unsw.ats.entities.*;
 
 import javax.ws.rs.*;
@@ -11,7 +12,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -70,7 +70,7 @@ public class ApplicationsController extends ControllerBase {
         application.setJob(job);
         application.setBriefBio(briefBio);
         application.setSalary(salary);
-        application.setStatus("Application Received");
+        application.setStatus(Const.receivedStatus);
         application = applicationService.create(application);
         return Response.status(200)
                 .entity("<create><status>success</status><applicationId>" + application.getApplicationId() + "</applicationId></create>")
@@ -154,9 +154,9 @@ public class ApplicationsController extends ControllerBase {
     @Produces(MediaType.APPLICATION_XML)
     public Response assign(
             @PathParam("userId") String userId,
-            @PathParam("id") String applicationId,
-            @PathParam("reviewerId1") String reviewerId1,
-            @PathParam("reviewerId2") String reviewerId2
+            @FormParam("applicationId") String applicationId,
+            @FormParam("reviewer") String reviewer
+//            @FormParam("reviewerId2") String reviewerId2
     ){
         if(!validate(userId, 1)){
             return Response.status(401).entity("Unauthorized").build();
@@ -168,15 +168,38 @@ public class ApplicationsController extends ControllerBase {
         if(!application.getJob().getRecuriter().getUserId().equals(userId)){
             return Response.status(401).entity("Unauthorized: you are not authorized to assign this job to the reviewer").build();
         }
-        if(!validate(reviewerId1, 2)){
-            return Response.status(401).entity("This reviewer is not exist.").build();
+        String[] reviewerIds = reviewer.split(",");
+        if(reviewerIds.length > 2){
+            return Response.status(412).entity("Only two reviewers").build();
         }
-        if(!validate(reviewerId2, 2)){
-            return Response.status(401).entity("This reviewer is not exist.").build();
+        if(reviewerIds.length == 0){
+            return Response.status(412).entity("Please select reviewer").build();
         }
-        application.setReviewer1(reviewerService.findById(reviewerId1));
-        application.setReviewer2(reviewerService.findById(reviewerId2));
-        application.setStatus("application in review");
+        if(reviewerIds.length == 1){
+            if(!validate(reviewer, 2)){
+                return Response.status(401).entity("This reviewer is not exist.").build();
+            }
+            if(application.getReviewer1() == null){
+                Reviewer r1 = reviewerService.findById(reviewer);
+                application.setReviewer1(r1);
+            } else {
+                Reviewer r1 = reviewerService.findById(reviewer);
+                application.setReviewer2(r1);
+                application.setStatus(Const.reviewStatus);
+            }
+        }else {
+            if(!validate(reviewerIds[0], 2) || !validate(reviewerIds[1], 2)){
+                return Response.status(401).entity("The reviewer is not exist.").build();
+            }
+            if(application.getReviewer1() != null){
+                return Response.status(412).entity("Only one reviewer needed").build();
+            }
+            Reviewer r1 = reviewerService.findById(reviewerIds[0]);
+            application.setReviewer1(r1);
+            Reviewer r2 = reviewerService.findById(reviewerIds[1]);
+            application.setReviewer2(r2);
+            application.setStatus(Const.reviewStatus);
+        }
         applicationService.update(application);
         return Response.status(200).entity(application.getApplicationId()).build();
 
@@ -198,7 +221,9 @@ public class ApplicationsController extends ControllerBase {
         if (!application.getApplicant().getApplicantId().equals(userId)) {
             return Response.status(401).entity("Unauthorized: you are not authorized to update this application").build();
         }
-        //TODO: check the application status and see if it still can be update
+        if(!application.getStatus().equals(Const.receivedStatus)) {
+            return Response.status(412).entity("Application assigned to reviewer, can not update.").build();
+        }
         application.setBriefBio(briefBio);
         application.setSalary(salary);
         applicationService.update(application);
@@ -223,7 +248,7 @@ public class ApplicationsController extends ControllerBase {
             return Response.status(401).entity("Unauthorized").build();
         }
         application.setFinalIsAccepted(decision);
-        application.setStatus("final decision made");
+        application.setStatus(Const.finalStatus);
         applicationService.finalDec(application);
         return Response.status(200)
                 .entity(application.getApplicationId())
@@ -248,7 +273,7 @@ public class ApplicationsController extends ControllerBase {
             application.setReviewer1IsAccepted(decision);
             application.setReviewer1Recommendations(recommendation);
             if(!(application.getReviewer2() == null)){
-                application.setStatus("decision made by reviewer");
+                application.setStatus(Const.decisionStatus);
             }
             applicationService.review1(application);
             return Response.status(200).entity(application.getApplicationId()).build();
@@ -256,7 +281,7 @@ public class ApplicationsController extends ControllerBase {
             application.setReviewer2IsAccepted(decision);
             application.setReviewer2Recommendations(recommendation);
             if(!(application.getReviewer1() == null)){
-                application.setStatus("decision made by reviewer");
+                application.setStatus(Const.decisionStatus);
             }
             applicationService.review2(application);
             return Response.status(200)

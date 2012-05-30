@@ -6,6 +6,7 @@
 <body>
     <h2>Assign application ${requestScope.id} to: </h2>
     <form action="controller?scope=doAssign" method="POST">
+        <input type="hidden" name="applicationId" value="${requestScope.id}">
         <select name="reviewer" multiple="multiple">
             <c:forEach items="${reviewers}" var="reviewer">
                 <option value="${reviewer.id}">${reviewer.reviewerName}</option>

@@ -3,6 +3,8 @@ package unsw.ats.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
+import unsw.ats.MongoService.*;
+import unsw.ats.common.Const;
 import unsw.ats.entities.*;
 
 import javax.ws.rs.*;
@@ -31,7 +33,7 @@ public class Controller {
 
     @GET
     @Path("/init")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_XML)
     public Response test() throws ParseException {
         mongoTemplate.dropCollection("job");
         mongoTemplate.dropCollection("test");
@@ -146,7 +148,7 @@ public class Controller {
         application1.setApplicationId(UUID.randomUUID().toString());
         application1.setApplicant(applicant1);
         application1.setBriefBio("I have successfully designed, developed, and supported live use applications.");
-        application1.setStatus("Application Received");
+        application1.setStatus(Const.receivedStatus);
         application1.setJob(jobJava);
         application1.setReviewer1(reviewer);
         application1.setReviewer2(Jackson);
@@ -156,25 +158,21 @@ public class Controller {
         application2.setApplicationId(UUID.randomUUID().toString());
         application2.setApplicant(applicant2);
         application2.setBriefBio("I strive for continued excellence.");
-        application2.setStatus("Application Received");
+        application2.setStatus(Const.receivedStatus);
         application2.setJob(jobJava);
-        application1.setReviewer1(reviewer1);
-        application1.setReviewer2(Jackson);
 
         Application application3 = new Application();
         application3.setApplicationId(UUID.randomUUID().toString());
         application3.setApplicant(applicant3);
         application3.setBriefBio("I provide exceptional contributions to customer service for all customers");
-        application3.setStatus("Application Received");
+        application3.setStatus(Const.receivedStatus);
         application3.setJob(jobJava);
-        application1.setReviewer1(reviewer);
-        application1.setReviewer2(reviewer1);
 
         Application application4 = new Application();
         application4.setApplicationId(UUID.randomUUID().toString());
         application4.setApplicant(applicant4);
         application4.setBriefBio("With a BS degree in Computer Programming, I have a full understanding of the full life cycle of a software development project. I also have experience in learning and excelling at new technologies as needed.");
-        application4.setStatus("Application Received");
+        application4.setStatus(Const.receivedStatus);
         application4.setJob(jobJava);
         application1.setReviewer1(reviewer);
         application1.setReviewer2(Jackson);
@@ -183,110 +181,97 @@ public class Controller {
         application5.setApplicationId(UUID.randomUUID().toString());
         application5.setApplicant(applicant1);
         application5.setBriefBio("I was very interested in your advertisement as I am looking for an international opportunity.");
-        application5.setStatus("Application Received");
+        application5.setStatus(Const.receivedStatus);
         application5.setJob(jobObjectiveC);
-        application1.setReviewer1(reviewer1);
-        application1.setReviewer2(Jackson);
 
         Application application6 = new Application();
         application6.setApplicationId(UUID.randomUUID().toString());
         application6.setApplicant(applicant2);
         application6.setBriefBio("I have included my presentation in the attached CV.");
-        application6.setStatus("Application Received");
+        application6.setStatus(Const.receivedStatus);
         application6.setJob(jobObjectiveC);
-        application1.setReviewer1(reviewer1);
-        application1.setReviewer2(reviewer);
+
 
         Application application7 = new Application();
         application7.setApplicationId(UUID.randomUUID().toString());
         application7.setApplicant(applicant4);
         application7.setBriefBio("Established international musician with homes in London, Paris, Vienna and Tokyo seeks \n" +
                 "multilingual and highly organised personal secretary with a background in classical music.");
-        application7.setStatus("Application Received");
+        application7.setStatus(Const.receivedStatus);
         application7.setJob(jobObjectiveC);
-        application1.setReviewer1(reviewer);
-        application1.setReviewer2(Jackson);
+
 
         Application application8 = new Application();
         application8.setApplicationId(UUID.randomUUID().toString());
         application8.setApplicant(applicant2);
         application8.setBriefBio("Languages: French (native) & English essential.");
-        application8.setStatus("Application Received");
+        application8.setStatus(Const.receivedStatus);
         application8.setJob(jobPython);
-        application1.setReviewer1(reviewer);
-        application1.setReviewer2(Jackson);
+
 
         Application application9 = new Application();
         application9.setApplicationId(UUID.randomUUID().toString());
         application9.setApplicant(applicant3);
         application9.setBriefBio("Experience in classical music management.");
-        application9.setStatus("Application Received");
+        application9.setStatus(Const.receivedStatus);
         application9.setJob(jobPython);
-        application1.setReviewer1(reviewer1);
-        application1.setReviewer2(Jackson);
+
 
         Application application10 = new Application();
         application10.setApplicationId(UUID.randomUUID().toString());
         application10.setApplicant(applicant1);
         application10.setBriefBio("Organising the imminent move into an apartment in Paris.");
-        application10.setStatus("Application Received");
+        application10.setStatus(Const.receivedStatus);
         application10.setJob(job3);
-        application1.setReviewer1(reviewer1);
-        application1.setReviewer2(reviewer);
+
 
         Application application11 = new Application();
         application11.setApplicationId(UUID.randomUUID().toString());
         application11.setApplicant(applicant1);
         application11.setBriefBio("Managing properties in Paris, London and Vienna.");
-        application11.setStatus("Application Received");
+        application11.setStatus(Const.receivedStatus);
         application11.setJob(job4);
-        application1.setReviewer1(reviewer);
-        application1.setReviewer2(Jackson);
+
 
         Application application12 = new Application();
         application12.setApplicationId(UUID.randomUUID().toString());
         application12.setApplicant(applicant3);
         application12.setBriefBio("Excellent administration and organisation skills.");
-        application12.setStatus("Application Received");
+        application12.setStatus(Const.receivedStatus);
         application12.setJob(job5);
-        application1.setReviewer1(reviewer1);
-        application1.setReviewer2(Jackson);
+
 
         Application application13 = new Application();
         application13.setApplicationId(UUID.randomUUID().toString());
         application13.setApplicant(applicant2);
         application13.setBriefBio("Self-motivated & pro-active.");
-        application13.setStatus("Application Received");
+        application13.setStatus(Const.receivedStatus);
         application13.setJob(job6);
-        application1.setReviewer1(reviewer);
-        application1.setReviewer2(reviewer1);
+
 
         Application application14 = new Application();
         application14.setApplicationId(UUID.randomUUID().toString());
         application14.setApplicant(applicant4);
         application14.setBriefBio("Excellent people and communication skills.");
-        application14.setStatus("Application Received");
+        application14.setStatus(Const.receivedStatus);
         application14.setJob(job4);
-        application1.setReviewer1(reviewer);
-        application1.setReviewer2(Jackson);
+
 
         Application application15 = new Application();
         application15.setApplicationId(UUID.randomUUID().toString());
         application15.setApplicant(applicant3);
         application15.setBriefBio("Excellent communication skills in written and spoken French.");
-        application15.setStatus("Application Received");
+        application15.setStatus(Const.receivedStatus);
         application15.setJob(job3);
-        application1.setReviewer1(reviewer);
-        application1.setReviewer2(reviewer1);
+
 
         Application application16 = new Application();
         application16.setApplicationId(UUID.randomUUID().toString());
         application16.setApplicant(applicant4);
         application16.setBriefBio("Computer literate in MS Office applications, Internet and email applications.");
-        application16.setStatus("Application Received");
+        application16.setStatus(Const.receivedStatus);
         application16.setJob(job3);
-        application1.setReviewer1(reviewer1);
-        application1.setReviewer2(Jackson);
+
 
         // Insert to db
         mongoTemplate.insert(jobJava, "job");
