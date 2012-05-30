@@ -49,7 +49,7 @@ public class ApplicationService {
         Application existingApplication = applicationRepository.findByApplicationId(application.getApplicationId());
         if(existingApplication == null)
             return null;
-        existingApplication.setReviewer1IsAccepted(application.isReviewer1IsAccepted());
+        existingApplication.setReviewer1IsAccepted(application.getReviewer1IsAccepted());
         existingApplication.setReviewer1Recommendations(application.getReviewer1Recommendations());
         return applicationRepository.save(existingApplication);
     }
@@ -58,8 +58,8 @@ public class ApplicationService {
         Application existingApplication = applicationRepository.findByApplicationId(application.getApplicationId());
         if(existingApplication == null)
             return null;
-        existingApplication.setReviewer2IsAccepted(application.isReviewer2IsAccepted());
-        existingApplication.setReviewer2Recommendations(application.isReviewer2Recommendations());
+        existingApplication.setReviewer2IsAccepted(application.getReviewer2IsAccepted());
+        existingApplication.setReviewer2Recommendations(application.getReviewer2Recommendations());
         return applicationRepository.save(existingApplication);
     }
 
