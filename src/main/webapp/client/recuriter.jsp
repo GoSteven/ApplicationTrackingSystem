@@ -16,5 +16,7 @@
 
     <h2>Assign Applications</h2>
     <a href="controller?scope=myApplications">View my applications</a>
+    <h2>All Jobs</h2>
+    <a href="controller?scope=viewAllJobs">View all jobs</a>
 </body>
 </html>

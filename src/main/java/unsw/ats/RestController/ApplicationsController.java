@@ -22,7 +22,7 @@ import java.util.UUID;
  */
 @Component
 @Path("/applications/{userId: [^/]*}") /*make userId can be empty*/
-public class ApplicationsController {
+public class ApplicationsController extends ControllerBase {
     @Autowired
     private ApplicationService applicationService;
     @Autowired
@@ -175,6 +175,7 @@ public class ApplicationsController {
         if (!application.getApplicant().getApplicantId().equals(userId)) {
             return Response.status(401).entity("Unauthorized: you are not authorized to update this application").build();
         }
+        //TODO: check the application status and see if it still can be update
         application.setBriefBio(briefBio);
         application.setSalary(salary);
         applicationService.update(application);
@@ -258,29 +259,6 @@ public class ApplicationsController {
         return Response.status(200)
                 .entity("TODO: return if successful")
                 .build();
-    }
-
-    private boolean validate(String userId, int type) {
-//        return true;
-        if ((type & 1) > 0) {
-            for (Recuriter r : recuriterService.readAll()) {
-                if (r.getUserId().equals(userId))
-                    return true;
-            }
-        }
-        if((type & 2) > 0 ){
-            for (Reviewer r: reviewerService.readAll()) {
-                if(r.getId().equals(userId))
-                    return true;
-            }
-        }
-        if((type & 4) > 0){
-            for(Applicant a: applicantService.readAll()) {
-                if(a.getApplicantId().equals(userId))
-                    return true;
-            }
-        }
-        return false;
     }
 
 }

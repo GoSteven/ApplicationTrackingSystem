@@ -4,6 +4,7 @@ import com.sun.jersey.core.util.StringIgnoreCaseKeyComparator;
 import com.thoughtworks.xstream.XStream;
 import unsw.ats.entities.Application;
 import unsw.ats.entities.Job;
+import unsw.ats.entities.Reviewer;
 
 import java.util.List;
 
@@ -33,5 +34,10 @@ public class XmlAdapter {
     public static String getApplicationsXML(List<Application> applications) {
         XStream xStream = new XStream();
         return xStream.toXML(applications);
+    }
+
+    public static String getReviewersXML(List<Reviewer> reviewers) {
+        XStream xStream = new XStream();
+        return xStream.toXML(reviewers);
     }
 }

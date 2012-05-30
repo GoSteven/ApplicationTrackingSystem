@@ -50,7 +50,7 @@ import javax.xml.parsers.*;
  */
 @Component
 @Path("/jobs/{userId: [^/]*}") /*make userId can be empty*/
-public class JobsController {
+public class JobsController extends ControllerBase {
 
     @Autowired
     private JobService service;
@@ -169,7 +169,7 @@ public class JobsController {
         List<Job> allJobs = service.readAll();
         List<Job> shownJob = new ArrayList<Job>();
         for(Job job: allJobs){
-            if(job.getClosingDate().after(new Date())){
+            if(job.getClosingDate().after(Calendar.getInstance())){
                 shownJob.add(job);
             }
         }
@@ -200,32 +200,4 @@ public class JobsController {
         return null;
     }
 
-    /**
-     * validate user from applicant, reviewer or recuriter
-     * @param userId
-     * @param type      001
-     * @return
-     */
-    private boolean validate(String userId, int type) {
-//        return true;
-        if ((type & 1) > 0) {
-            for (Recuriter r : recuriterService.readAll()) {
-                if (r.getUserId().equals(userId))
-                    return true;
-            }
-        }
-        if((type & 2) > 0 ){
-            for (Reviewer r: reviewerService.readAll()) {
-                if(r.getId().equals(userId))
-                    return true;
-            }
-        }
-        if((type & 4) > 0){
-            for(Applicant a: applicantService.readAll()) {
-                if(a.getApplicantId().equals(userId))
-                    return true;
-            }
-        }
-        return false;
-    }
 }

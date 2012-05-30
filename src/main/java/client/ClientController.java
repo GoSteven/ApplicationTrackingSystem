@@ -4,6 +4,8 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.thoughtworks.xstream.XStream;
+import unsw.ats.entities.Reviewer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -125,7 +128,7 @@ public class ClientController extends HttpServlet {
                 request.setAttribute("errorMessage", "Get applications Failed: " + clientResponse.getEntity(String.class));
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
-        } else if ("updateApplication".endsWith(scope)) {
+        } else if ("updateApplication".equals(scope)) {
             Map<String, String[]> parameterMap = request.getParameterMap();
             ClientResponse clientResponse = submitRequest(SERVICE_ADDRESS + "applications/" + userId + "/update", parameterMap, "put");
             if (clientResponse.getStatus() == 200) {
@@ -136,6 +139,16 @@ public class ClientController extends HttpServlet {
             } else {
                 request.setAttribute("errorMessage", "Application update failed: " + clientResponse.getEntity(String.class));
                 request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+        } else if ("assignToReviewers".equals(scope)) {
+            String applicationId = request.getParameter("id");
+            Client client = Client.create();
+            WebResource webResource = client.resource(SERVICE_ADDRESS + "user/" + userId + "/reviewers");
+            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+            if (clientResponse.getStatus() == 200) {
+                String reviewersXML = clientResponse.getEntity(String.class);
+                XStream xStream = new XStream();
+                List<Reviewer> reviewers = (List<Reviewer>)xStream.fromXML(reviewersXML);
             }
         }
 

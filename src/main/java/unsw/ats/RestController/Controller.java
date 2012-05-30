@@ -53,6 +53,10 @@ public class Controller {
         reviewer.setId("b8af6b41-0fda-495a-8deb-af539dddbe90");
         reviewer.setReviewerName("Edison");
 
+        Reviewer Jackson = new Reviewer();
+        Jackson.setId("2c1f914d-d932-41ef-b7ab-76e6dac42794");
+        Jackson.setReviewerName("Jackson");
+
 
         Job jobJava = new Job();
         jobJava.setJobId(UUID.randomUUID().toString());
@@ -85,6 +89,7 @@ public class Controller {
         application.setApplicationId(UUID.randomUUID().toString());
         application.setApplicant(applicant);
         application.setBriefBio("I am a cute Rabbit and I can coding.");
+        application.setStatus("Application Received");
         application.setJob(jobJava);
 
         // Insert to db
@@ -94,6 +99,7 @@ public class Controller {
         mongoTemplate.insert(recuriter, "recuriter");
         mongoTemplate.insert(applicant, "applicant");
         mongoTemplate.insert(reviewer, "reviewer");
+        mongoTemplate.insert(Jackson, "reviewer");
         mongoTemplate.insert(application, "application");
 
         return Response.status(200).entity("Howdy, dude!").build();
