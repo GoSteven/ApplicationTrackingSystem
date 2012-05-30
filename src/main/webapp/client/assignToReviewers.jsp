@@ -4,9 +4,9 @@
     <title>Assign Application to Reviewers - Application Tracking System</title>
 </head>
 <body>
-    <h2>Assign application ${requestScope.id} to: </h2>
+    <h2>Assign application ${id} to: </h2>
     <form action="controller?scope=doAssign" method="POST">
-        <input type="hidden" name="applicationId" value="${requestScope.id}">
+        <input type="hidden" name="applicationId" value="${id}">
         <select name="reviewer" multiple="multiple">
             <c:forEach items="${reviewers}" var="reviewer">
                 <option value="${reviewer.id}">${reviewer.reviewerName}</option>
