@@ -86,7 +86,22 @@ public class ClientController extends HttpServlet {
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
             client.destroy();
-        } else if ("createApplication".equals(scope)) {
+        } else if ("viewJob".equals(scope)) {
+            /* View a job  */
+            String jobId = request.getParameter("id");
+            Client client = Client.create();
+            WebResource webResource = client.resource(SERVICE_ADDRESS + "jobs/" + userId + "/detail?id=" + jobId);
+            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+            if (clientResponse.getStatus() == 200) {
+                String allJobsXML = clientResponse.getEntity(String.class);
+                request.setAttribute("allJobsXML", allJobsXML);
+                request.getRequestDispatcher("job.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Get all jobs Failed: " + clientResponse.toString());
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+            client.destroy();
+        }else if ("createApplication".equals(scope)) {
         /* Create application */
             Map<String, String[]> parameterMap = request.getParameterMap();
             ClientResponse clientResponse = submitRequest(SERVICE_ADDRESS + "applications/" + userId + "/create", parameterMap, "post");
