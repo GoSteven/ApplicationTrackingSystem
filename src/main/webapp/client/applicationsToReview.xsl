@@ -28,7 +28,7 @@
                         </td>
                         <td>
                             <a href="controller?scope=reviewApplication&amp;id={//applicationId}">
-                                Assign
+                                Review
                             </a>
                         </td>
 
