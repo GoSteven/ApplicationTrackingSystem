@@ -26,6 +26,55 @@ public class Application {
     @DBRef
     private Reviewer reviewer2;
 
+    private String briefBio;
+
+    private float salary;
+    /**
+     * status = 0   application received
+     * status = 1   application in review
+     * status = 2   decision made by reviewer
+     * status = 3   final decision made
+     */
+    private String status;
+    /**
+     * reviewerIsAccepted = 1  accepted
+     * reviewerIsAcceoted = 0  rejected
+     */
+    private Boolean reviewer1IsAccepted;
+    private String reviewer1Recommendations;
+
+    private Boolean reviewer2IsAccepted;
+    private String reviewer2Recommendations;
+    /**
+     * finalIsAccepted = 1 accepted
+     * finalIsAccepted = 0 rejected
+     */
+    private boolean finalIsAccepted;
+
+    public String getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
+    }
+
+    public Applicant getApplicant() {
+        return applicant;
+    }
+
+    public void setApplicant(Applicant applicant) {
+        this.applicant = applicant;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
+
     public Reviewer getReviewer1() {
         return reviewer1;
     }
@@ -42,103 +91,6 @@ public class Application {
         this.reviewer2 = reviewer2;
     }
 
-    private String briefBio;
-    private float salary;
-    /**
-     * status = 0   application received
-     * status = 1   application in review
-     * status = 2   decision made by reviewer
-     * status = 3   final decision made
-     */
-    private String status;
-    /**
-     * reviewerIsAccepted = 1  accepted
-     * reviewerIsAcceoted = 0  rejected
-     */
-    private boolean reviewer1IsAccepted;
-    private String reviewer1Recommendations;
-
-    private boolean reviewer2IsAccepted;
-    private String reviewer2Recommendations;
-    /**
-     * finalIsAccepted = 1 accepted
-     * finalIsAccepted = 0 rejected
-     */
-    private boolean finalIsAccepted;
-
-    public Job getJob() {
-        return job;
-    }
-
-    public void setJob(Job job) {
-        this.job = job;
-    }
-
-    public Applicant getApplicant() {
-        return applicant;
-    }
-
-    public void setApplicant(Applicant applicant) {
-        this.applicant = applicant;
-    }
-
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public boolean isReviewer1IsAccepted() {
-        return reviewer1IsAccepted;
-    }
-
-    public void setReviewer1IsAccepted(boolean reviewer1IsAccepted) {
-        this.reviewer1IsAccepted = reviewer1IsAccepted;
-    }
-
-    public String getReviewer1Recommendations() {
-        return reviewer1Recommendations;
-    }
-
-    public void setReviewer1Recommendations(String reviewer1Recommendations) {
-        this.reviewer1Recommendations = reviewer1Recommendations;
-    }
-
-    public boolean isReviewer2IsAccepted() {
-        return reviewer2IsAccepted;
-    }
-
-    public void setReviewer2IsAccepted(boolean reviewer2IsAccepted) {
-        this.reviewer2IsAccepted = reviewer2IsAccepted;
-    }
-
-    public String isReviewer2Recommendations() {
-        return reviewer2Recommendations;
-    }
-
-    public void setReviewer2Recommendations(String reviewer2Recommendations) {
-        this.reviewer2Recommendations = reviewer2Recommendations;
-    }
-
-    public boolean isFinalIsAccepted() {
-        return finalIsAccepted;
-    }
-
-    public void setFinalIsAccepted(boolean finalIsAccepted) {
-        this.finalIsAccepted = finalIsAccepted;
-    }
-
-    public String getApplicationId() {
-        return applicationId;
-    }
-
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
-    }
-
     public String getBriefBio() {
         return briefBio;
     }
@@ -153,5 +105,53 @@ public class Application {
 
     public void setSalary(float salary) {
         this.salary = salary;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Boolean getReviewer1IsAccepted() {
+        return reviewer1IsAccepted;
+    }
+
+    public void setReviewer1IsAccepted(Boolean reviewer1IsAccepted) {
+        this.reviewer1IsAccepted = reviewer1IsAccepted;
+    }
+
+    public String getReviewer1Recommendations() {
+        return reviewer1Recommendations;
+    }
+
+    public void setReviewer1Recommendations(String reviewer1Recommendations) {
+        this.reviewer1Recommendations = reviewer1Recommendations;
+    }
+
+    public Boolean getReviewer2IsAccepted() {
+        return reviewer2IsAccepted;
+    }
+
+    public void setReviewer2IsAccepted(Boolean reviewer2IsAccepted) {
+        this.reviewer2IsAccepted = reviewer2IsAccepted;
+    }
+
+    public String getReviewer2Recommendations() {
+        return reviewer2Recommendations;
+    }
+
+    public void setReviewer2Recommendations(String reviewer2Recommendations) {
+        this.reviewer2Recommendations = reviewer2Recommendations;
+    }
+
+    public boolean isFinalIsAccepted() {
+        return finalIsAccepted;
+    }
+
+    public void setFinalIsAccepted(boolean finalIsAccepted) {
+        this.finalIsAccepted = finalIsAccepted;
     }
 }

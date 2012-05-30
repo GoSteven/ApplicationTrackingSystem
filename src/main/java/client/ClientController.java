@@ -101,18 +101,13 @@ public class ClientController extends HttpServlet {
             }
         } else if ("myApplications".equals(scope)) {
         /* my applications */
-            Client client = Client.create();
-            WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/myApplications");
-            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
-            if (clientResponse.getStatus() == 200) {
-                String myApplicationsXML = clientResponse.getEntity(String.class);
+            String myApplicationsXML = getMyApplications(userId, request, response);
+            if (myApplicationsXML.length() > 0) {
                 request.setAttribute("myApplicationsXML", myApplicationsXML);
                 request.getRequestDispatcher("myApplications.jsp").forward(request, response);
             } else {
-                request.setAttribute("errorMessage", "Get my applications Failed: " + clientResponse.getEntity(String.class));
-                request.getRequestDispatcher("error.jsp").forward(request, response);
+                return;
             }
-            client.destroy();
         } else if ("editApplication".equals(scope)) {
         /* edit application */
             // http://localhost:8080/ApplicantTrackingSystem/client/controller?scope=editApplication&id=cd2edfde-9c2e-4dbc-8fa2-208eb9c707e0
@@ -125,7 +120,7 @@ public class ClientController extends HttpServlet {
                 request.setAttribute("applicationXML", applicationXML);
                 request.getRequestDispatcher("editApplication.jsp").forward(request, response);
             } else {
-                request.setAttribute("errorMessage", "Get applications Failed: " + clientResponse.getEntity(String.class));
+                request.setAttribute("errorMessage", "Get application Failed: " + clientResponse.getEntity(String.class));
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
         } else if ("updateApplication".equals(scope)) {
@@ -141,18 +136,13 @@ public class ClientController extends HttpServlet {
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
         } else if ("applicationsToMyJobs".equals(scope)) {
-            Client client = Client.create();
-            WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/myApplications");
-            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
-            if (clientResponse.getStatus() == 200) {
-                String myApplicationsXML = clientResponse.getEntity(String.class);
+            String myApplicationsXML = getMyApplications(userId, request, response);
+            if (myApplicationsXML.length() > 0) {
                 request.setAttribute("myApplicationsXML", myApplicationsXML);
                 request.getRequestDispatcher("applicationsToMyJobs.jsp").forward(request, response);
             } else {
-                request.setAttribute("errorMessage", "Get my applications Failed: " + clientResponse.getEntity(String.class));
-                request.getRequestDispatcher("error.jsp").forward(request, response);
+                return;
             }
-            client.destroy();
         }
         else if ("assignToReviewers".equals(scope)) {
             Client client = Client.create();
@@ -165,6 +155,32 @@ public class ClientController extends HttpServlet {
                 request.setAttribute("reviewers", reviewers);
                 request.getRequestDispatcher("assignToReviewers.jsp").forward(request, response);
             }
+        } else if ("applicationsToBeReviewed".equals(scope)) {
+            String myApplicationsXML = getMyApplications(userId, request, response);
+            if (myApplicationsXML.length() > 0) {
+                request.setAttribute("myApplicationsXML", myApplicationsXML);
+                request.getRequestDispatcher("applicationsToReview.jsp").forward(request, response);
+            } else {
+                return;
+            }
+        } else if ("reviewApplication".equals(scope)) {
+            String applicationId = request.getParameter("id");
+            if (applicationId == null || applicationId.trim().equals("")) {
+                request.setAttribute("errorMessage", "Application update failed: ");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+            Client client = Client.create();
+            WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/detail?id=" + applicationId);
+            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+            if (clientResponse.getStatus() == 200) {
+                String applicationXML = clientResponse.getEntity(String.class);
+                request.setAttribute("applicationXML", applicationXML);
+                request.getRequestDispatcher("reviewApplication.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Get application Failed: " + clientResponse.getEntity(String.class));
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+            client.destroy();
         }
 
 
@@ -183,6 +199,26 @@ public class ClientController extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
         }
+    }
+
+
+    private String getMyApplications(
+            String userId,
+            HttpServletRequest request,
+            HttpServletResponse response) throws IOException, ServletException {
+        String returnXML = "";
+        Client client = Client.create();
+        WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/myApplications");
+        ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+        if (clientResponse.getStatus() == 200) {
+            returnXML = clientResponse.getEntity(String.class);
+
+        } else {
+            request.setAttribute("errorMessage", "Get my applications Failed: " + clientResponse.getEntity(String.class));
+            request.getRequestDispatcher("error.jsp").forward(request, response);
+        }
+        client.destroy();
+        return returnXML;
     }
 
     private ClientResponse submitRequest(String clientResource, Map<String, String[]> parameterMap, String method) {

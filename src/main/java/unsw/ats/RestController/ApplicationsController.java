@@ -90,13 +90,25 @@ public class ApplicationsController extends ControllerBase {
             @QueryParam(value = "id") String id
     ) {
 //        TODO
-        if (!validate(userId, 5)) {
+        if (!validate(userId, 7)) {
             return Response.status(401).entity("Unauthorized").build();
         }
         //TODO: get the application, encode in xml
-        String applicationXML = XmlAdapter.getApplicationXML(applicationService.findById(id));
-        return Response.status(200)
-                .entity(applicationXML).build();
+        Application application = applicationService.findById(id);
+        if (
+                (application.getReviewer1() != null && application.getReviewer1().getId().equals(userId))
+            ||
+                (application.getReviewer2() != null && application.getReviewer2().getId().equals(userId))
+            ||
+                (application.getJob().getRecuriter().getUserId().equals(userId))
+            ||
+                (application.getApplicant().getApplicantId().equals(userId))) {
+            String applicationXML = XmlAdapter.getApplicationXML(applicationService.findById(id));
+            return Response.status(200)
+                    .entity(applicationXML).build();
+        } else {
+            return Response.status(401).entity("Unauthorized").build();
+        }
     }
 
     @GET
@@ -106,19 +118,30 @@ public class ApplicationsController extends ControllerBase {
             @PathParam("userId") String userId
     ) {
 //        TODO:
-        if (!validate(userId, 4 + 1)) {
+        if (!validate(userId, 4 + 2 + 1)) {
             return Response.status(401).entity("Unauthorized").build();
         }
         List<Application> applications = applicationService.readAll();
         List<Application> myApplications = new ArrayList<Application>();
         for (Application application : applications) {
-            if (userId.endsWith(application.getApplicant().getApplicantId())) {
+            if (userId.equals(application.getApplicant().getApplicantId())) {
             /* For applicants, display his applications*/
                 myApplications.add(application);
-            } else if (userId.endsWith(application.getJob().getRecuriter().getUserId())) {
+            } else if (userId.equals(application.getJob().getRecuriter().getUserId())) {
             /* For Recuriters, display the applications, which apply for his job */
                 myApplications.add(application);
+            } else if (
+            /* For Reviewers, display the applications assigned to him */
+                    (application.getReviewer1() != null
+                    && application.getReviewer1IsAccepted() == null
+                    && userId.equals(application.getReviewer1().getId()))
+                    ||
+                    (application.getReviewer2() != null
+                    && application.getReviewer2IsAccepted() == null
+                    && userId.equals(application.getReviewer2().getId()))) {
+                myApplications.add(application);
             }
+
         }
 
         String myApplicationsXML = XmlAdapter.getApplicationsXML(myApplications);
