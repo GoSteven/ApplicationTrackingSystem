@@ -55,15 +55,15 @@ public class Controller {
 
         Applicant applicant2 = new Applicant();
         applicant2.setApplicantId("3f9d6286-e131-42fe-a73f-d85f242bdf62");
-        applicant2.setApplicantName("Pop Zheng");
+        applicant2.setApplicantName("Steven You");
 
         Applicant applicant3 = new Applicant();
         applicant3.setApplicantId("3f9d6286-e131-42fe-a73f-d85f242bdf62");
-        applicant3.setApplicantName("Pop Zheng");
+        applicant3.setApplicantName("Frank Guo");
 
         Applicant applicant4 = new Applicant();
         applicant4.setApplicantId("3f9d6286-e131-42fe-a73f-d85f242bdf62");
-        applicant4.setApplicantName("Pop Zheng");
+        applicant4.setApplicantName("Sheldon Rong");
 
         Reviewer reviewer = new Reviewer();
         reviewer.setId("b8af6b41-0fda-495a-8deb-af539dddbe90");
@@ -304,6 +304,7 @@ public class Controller {
         mongoTemplate.insert(applicant4, "applicant");
         mongoTemplate.insert(reviewer, "reviewer");
         mongoTemplate.insert(Jackson, "reviewer");
+        mongoTemplate.insert(reviewer1, "reviewer");
         mongoTemplate.insert(application1, "application");
         mongoTemplate.insert(application2, "application");
         mongoTemplate.insert(application3, "application");
