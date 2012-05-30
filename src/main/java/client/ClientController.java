@@ -214,6 +214,36 @@ public class ClientController extends HttpServlet {
                 request.setAttribute("errorMessage", "Application review failed: " + clientResponse.getEntity(String.class));
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
+        } else if("final".equals(scope)){
+            String applicationId = request.getParameter("id");
+            if (applicationId == null || applicationId.trim().equals("")) {
+                request.setAttribute("errorMessage", "Application update failed: ");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+            Client client = Client.create();
+            WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/detail?id=" + applicationId);
+            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+            if (clientResponse.getStatus() == 200) {
+                String applicationXML = clientResponse.getEntity(String.class);
+                request.setAttribute("recuriterId", userId);
+                request.setAttribute("applicationXML", applicationXML);
+                request.getRequestDispatcher("finalDecision.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Get application Failed: " + clientResponse.getEntity(String.class));
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+            client.destroy();
+        }else if("finalDecision".equals(scope)){
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            ClientResponse clientResponse = submitRequest(SERVICE_ADDRESS + "applications/" + userId + "/finalDecision", parameterMap, "put");
+            if (clientResponse.getStatus() == 200) {
+                request.setAttribute("successMessage", "Application reviewed successfully");
+                request.setAttribute("successHtml", "linkToNewApplication");
+                request.getRequestDispatcher("success.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Application review failed: " + clientResponse.getEntity(String.class));
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
         }
 
 

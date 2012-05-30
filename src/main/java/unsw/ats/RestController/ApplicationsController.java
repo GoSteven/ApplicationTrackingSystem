@@ -232,7 +232,7 @@ public class ApplicationsController extends ControllerBase {
                 .build();
     }
 
-    @PUT
+    @POST
     @Path("/finalDecision")
     @Produces(MediaType.APPLICATION_XML)
     public Response finalDecision(
