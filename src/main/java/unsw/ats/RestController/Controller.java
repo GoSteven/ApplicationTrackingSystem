@@ -33,7 +33,7 @@ public class Controller {
 
     @GET
     @Path("/init")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces(MediaType.TEXT_PLAIN)
     public Response test() throws ParseException {
         mongoTemplate.dropCollection("job");
         mongoTemplate.dropCollection("test");
