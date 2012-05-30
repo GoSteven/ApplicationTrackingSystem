@@ -89,11 +89,9 @@ public class ApplicationsController extends ControllerBase {
             @PathParam("userId") String userId,
             @QueryParam(value = "id") String id
     ) {
-//        TODO
         if (!validate(userId, 7)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-        //TODO: get the application, encode in xml
         Application application = applicationService.findById(id);
         if (
                 (application.getReviewer1() != null && application.getReviewer1().getId().equals(userId))
@@ -117,7 +115,6 @@ public class ApplicationsController extends ControllerBase {
     public Response myApplications(
             @PathParam("userId") String userId
     ) {
-//        TODO:
         if (!validate(userId, 4 + 2 + 1)) {
             return Response.status(401).entity("Unauthorized").build();
         }
@@ -222,7 +219,7 @@ public class ApplicationsController extends ControllerBase {
             return Response.status(401).entity("Unauthorized: you are not authorized to update this application").build();
         }
         if(!application.getStatus().equals(Const.receivedStatus)) {
-            return Response.status(412).entity("Application assigned to reviewer, can not update.").build();
+            return Response.status(412).entity("Application in review or closed, can not update.").build();
         }
         application.setBriefBio(briefBio);
         application.setSalary(salary);

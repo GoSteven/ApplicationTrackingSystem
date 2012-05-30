@@ -119,22 +119,11 @@ public class JobsController extends ControllerBase {
         if (!validate(userId, 7)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-        String jobsXml = XmlAdapter.getJobXML(service.findById(id));
-        //TODO: get the job, use XQuery!
-//        XPathFactory factory = XPathFactory.newInstance();
-//        XPath xPath = factory.newXPath();
-//        XPathExpression expression = xPath.compile("//unsw.ats.entities.Job[jobId='" + id + "']//text()");
-//        InputSource inputSource = new InputSource(new StringReader(jobsXml));
-//        Object result = expression.evaluate(inputSource, XPathConstants.NODESET);
-//        DTMNodeList nodes = (DTMNodeList) result;
-//        for (int i = 0; i < nodes.getLength(); i ++) {
-////            if(!nodes.item(i).getNodeValue().trim().equals("")) {
-//
-//                System.out.println(nodes.item(i).getNodeValue());
-////             + " @ " +
-////            nodes.item(i).getParentNode().getNodeName()
-////            }
-//        }
+        Job job = service.findById(id);
+        if (job == null) {
+            return Response.status(404).entity("Not Found").build();
+        }
+        String jobsXml = XmlAdapter.getJobXML(job);
 
         //http://www.ibm.com/developerworks/xml/library/x-xjavaxquery/
         return Response.status(200)

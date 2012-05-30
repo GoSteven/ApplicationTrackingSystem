@@ -248,7 +248,7 @@ public class ClientController extends HttpServlet {
 
 
         else {
-
+        //TODO: delete application by Applicant
 
 
             response.setContentType("text/html");
