@@ -148,10 +148,14 @@ public class Controller {
         application1.setApplicationId(UUID.randomUUID().toString());
         application1.setApplicant(applicant1);
         application1.setBriefBio("I have successfully designed, developed, and supported live use applications.");
-        application1.setStatus(Const.receivedStatus);
+        application1.setStatus(Const.decisionStatus);
         application1.setJob(jobJava);
         application1.setReviewer1(reviewer);
         application1.setReviewer2(Jackson);
+        application1.setReviewer1IsAccepted(true);
+        application1.setReviewer1Recommendations("This is the kind of people I like.");
+        application1.setReviewer2IsAccepted(false);
+        application1.setReviewer2Recommendations("Salary too high, cannot afford");
 
 
         Application application2 = new Application();
@@ -172,7 +176,7 @@ public class Controller {
         application4.setApplicationId(UUID.randomUUID().toString());
         application4.setApplicant(applicant4);
         application4.setBriefBio("With a BS degree in Computer Programming, I have a full understanding of the full life cycle of a software development project. I also have experience in learning and excelling at new technologies as needed.");
-        application4.setStatus(Const.receivedStatus);
+        application4.setStatus(Const.reviewStatus);
         application4.setJob(jobJava);
         application1.setReviewer1(reviewer);
         application1.setReviewer2(Jackson);

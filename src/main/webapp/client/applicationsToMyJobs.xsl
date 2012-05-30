@@ -27,10 +27,26 @@
                             </a>
                         </td>
                         <td>
+                            <xsl:if test="status='application received'">
+                                <a href="controller?scope=assignToReviewers&amp;id={applicationId}">
+                                    Assign
+                                </a>
 
-                            <a href="controller?scope=assignToReviewers&amp;id={applicationId}">
-                                Assign
-                            </a>
+                            </xsl:if>
+                            <xsl:if test="status='application in review'">
+                                in review
+                            </xsl:if>
+                            <xsl:if test="status='decision made by reviewer'">
+                                <a href="controller?scope=final&amp;id={applicationId}">
+                                    Final decision
+                                </a>
+                            </xsl:if>
+                            <xsl:if test="status='final decision made'">
+                                Closed: <xsl:value-of select="finalIsAccepted" />
+                            </xsl:if>
+
+
+
                         </td>
 
                         <!--<td> <a href=controller?scope=editApplication&id=<xsl:value-of select="job/jobId"/> >Edit Application</xsl:value-of> </td>-->
