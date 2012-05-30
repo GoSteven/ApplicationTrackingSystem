@@ -140,8 +140,21 @@ public class ClientController extends HttpServlet {
                 request.setAttribute("errorMessage", "Application update failed: " + clientResponse.getEntity(String.class));
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
-        } else if ("assignToReviewers".equals(scope)) {
-            String applicationId = request.getParameter("id");
+        } else if ("applicationsToMyJobs".equals(scope)) {
+            Client client = Client.create();
+            WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/myApplications");
+            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+            if (clientResponse.getStatus() == 200) {
+                String myApplicationsXML = clientResponse.getEntity(String.class);
+                request.setAttribute("myApplicationsXML", myApplicationsXML);
+                request.getRequestDispatcher("applicationsToMyJobs.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Get my applications Failed: " + clientResponse.getEntity(String.class));
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+            client.destroy();
+        }
+        else if ("assignToReviewers".equals(scope)) {
             Client client = Client.create();
             WebResource webResource = client.resource(SERVICE_ADDRESS + "user/" + userId + "/reviewers");
             ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
@@ -149,6 +162,8 @@ public class ClientController extends HttpServlet {
                 String reviewersXML = clientResponse.getEntity(String.class);
                 XStream xStream = new XStream();
                 List<Reviewer> reviewers = (List<Reviewer>)xStream.fromXML(reviewersXML);
+                request.setAttribute("reviewers", reviewers);
+                request.getRequestDispatcher("assignToReviewers.jsp").forward(request, response);
             }
         }
 
