@@ -232,13 +232,13 @@ public class ApplicationsController extends ControllerBase {
                 .build();
     }
 
-    @POST
+    @PUT
     @Path("/finalDecision")
     @Produces(MediaType.APPLICATION_XML)
     public Response finalDecision(
-            @PathParam("recuriterId") String recuriterId,
-            @PathParam("applicationId") String applicationId,
-            @PathParam("decision") boolean decision
+            @PathParam("userId") String recuriterId,
+            @FormParam("applicationId") String applicationId,
+            @FormParam("decision") boolean decision
     ){
         Application application = applicationService.findById(applicationId);
         if(application == null){
