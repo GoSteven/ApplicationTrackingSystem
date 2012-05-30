@@ -27,7 +27,7 @@
                             </a>
                         </td>
                         <td>
-                            <a href="controller?scope=editApplication&amp;id={//applicationId}">
+                            <a href="controller?scope=editApplication&amp;id={applicationId}">
                                 Edit
                             </a>
                         </td>
