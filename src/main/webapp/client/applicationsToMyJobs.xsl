@@ -27,6 +27,7 @@
                             </a>
                         </td>
                         <td>
+
                             <a href="controller?scope=assignToReviewers&amp;id={//applicationId}">
                                 Assign
                             </a>

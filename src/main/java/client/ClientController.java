@@ -164,7 +164,27 @@ public class ClientController extends HttpServlet {
                 List<Reviewer> reviewers = (List<Reviewer>)xStream.fromXML(reviewersXML);
                 request.setAttribute("reviewers", reviewers);
                 request.getRequestDispatcher("assignToReviewers.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Get my reviewers Failed: " + clientResponse.getEntity(String.class));
+                request.getRequestDispatcher("error.jsp").forward(request, response);
             }
+            client.destroy();
+        } else if("doAssign".equals(scope)){
+            Map<String, String[]> parameterMap = request.getParameterMap();
+//            Client client = Client.create();
+//            WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" +userId + "/assign");
+            ClientResponse clientResponse = submitRequest(SERVICE_ADDRESS + "applications/" + userId + "/assign", parameterMap, "post");
+//            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).post(ClientResponse.class);
+            if (clientResponse.getStatus() == 200) {
+                request.setAttribute("successMessage", "Application Created successfully");
+                //TODO: linkToNewApplication
+                request.setAttribute("successHtml", "linkToNewApplication");
+                request.getRequestDispatcher("success.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Application Creation failed: " + clientResponse.getEntity(String.class));
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+
         }
 
 
@@ -210,4 +230,6 @@ public class ClientController extends HttpServlet {
             throws IOException, ServletException {
         doGet(request,response);
     }
+
+
 }
