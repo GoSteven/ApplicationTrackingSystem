@@ -149,7 +149,7 @@ public class ApplicationsController extends ControllerBase {
                 .entity(myApplicationsXML).build();
     }
 
-    @PUT
+    @POST
     @Path("/assign")
     @Produces(MediaType.APPLICATION_XML)
     public Response assign(

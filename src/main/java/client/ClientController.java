@@ -139,7 +139,7 @@ public class ClientController extends HttpServlet {
             String myApplicationsXML = getMyApplications(userId, request, response);
             if (myApplicationsXML.length() > 0) {
                 request.setAttribute("myApplicationsXML", myApplicationsXML);
-                request.getRequestDispatcher("applicationsToMyJobs.jsp").forward(request, response);
+                request.getRequestDispatcher("ApplicationsToMyJobs.jsp").forward(request, response);
             } else {
                 return;
             }
@@ -151,8 +151,10 @@ public class ClientController extends HttpServlet {
             if (clientResponse.getStatus() == 200) {
                 String reviewersXML = clientResponse.getEntity(String.class);
                 XStream xStream = new XStream();
+                String applicationId = request.getParameter("id");
                 List<Reviewer> reviewers = (List<Reviewer>)xStream.fromXML(reviewersXML);
                 request.setAttribute("reviewers", reviewers);
+                request.setAttribute("id", applicationId);
                 request.getRequestDispatcher("assignToReviewers.jsp").forward(request, response);
             } else {
                 request.setAttribute("errorMessage", "Get my reviewers Failed: " + clientResponse.getEntity(String.class));
@@ -246,6 +248,9 @@ public class ClientController extends HttpServlet {
         for (Object key : parameterMap.keySet()) {
             String keyString = (String)key;
             String valueString = parameterMap.get(key)[0].toString();
+            if(parameterMap.get(key).length == 2){
+                 valueString += "," + parameterMap.get(key)[1].toString();
+            }
             formData.add(keyString, valueString);
         }
         WebResource webResource = client.resource(clientResource);

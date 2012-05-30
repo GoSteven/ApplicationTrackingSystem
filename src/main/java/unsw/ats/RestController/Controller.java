@@ -56,15 +56,15 @@ public class Controller {
         applicant1.setApplicantName("Pop Zheng");
 
         Applicant applicant2 = new Applicant();
-        applicant2.setApplicantId("3f9d6286-e131-42fe-a73f-d85f242bdf62");
+        applicant2.setApplicantId("6e9d6286-e131-42fe-a73f-d85f242bdf62");
         applicant2.setApplicantName("Steven You");
 
         Applicant applicant3 = new Applicant();
-        applicant3.setApplicantId("3f9d6286-e131-42fe-a73f-d85f242bdf62");
+        applicant3.setApplicantId("yt9d6286-e131-42fe-a73f-d85f242bdf62");
         applicant3.setApplicantName("Frank Guo");
 
         Applicant applicant4 = new Applicant();
-        applicant4.setApplicantId("3f9d6286-e131-42fe-a73f-d85f242bdf62");
+        applicant4.setApplicantId("sj9d6286-e131-42fe-a73f-d85f242bdf62");
         applicant4.setApplicantName("Sheldon Rong");
 
         Reviewer reviewer = new Reviewer();
