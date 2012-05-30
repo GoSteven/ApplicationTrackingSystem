@@ -260,10 +260,10 @@ public class ApplicationsController extends ControllerBase {
     @Path("/review")
     @Produces(MediaType.APPLICATION_XML)
     public Response review(
-            @PathParam("reviewerId")String reviewerId,
-            @PathParam("applicationId") String applicationId,
-            @PathParam("decision") boolean decision,
-            @PathParam("recommendation") String recommendation
+            @PathParam("userId")String reviewerId,
+            @FormParam("applicationId") String applicationId,
+            @FormParam("decision") boolean decision,
+            @FormParam("recommendation") String recommendation
     ){
         Application application = applicationService.findById(applicationId);
         if(application == null){

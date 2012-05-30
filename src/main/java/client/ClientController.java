@@ -200,6 +200,18 @@ public class ClientController extends HttpServlet {
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
 
+        } else if ("doReview".equals(scope)) {
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            ClientResponse clientResponse = submitRequest(SERVICE_ADDRESS + "applications/" + userId + "/review", parameterMap, "put");
+            if (clientResponse.getStatus() == 200) {
+                request.setAttribute("successMessage", "Application reviewed successfully");
+                //TODO: linkToNewApplication
+                request.setAttribute("successHtml", "linkToNewApplication");
+                request.getRequestDispatcher("success.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Application review failed: " + clientResponse.getEntity(String.class));
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
         }
 
 

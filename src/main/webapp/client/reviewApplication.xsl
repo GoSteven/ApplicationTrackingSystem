@@ -5,26 +5,27 @@
             <body>
                 <h2>Review Application</h2>
                 <form action="controller" method="POST">
-                    <input type="hidden" name="scope" value="updateApplication"/>
+                    <input type="hidden" name="scope" value="doReview"/>
+                    <input type="hidden" name="applicationId" value="{//unsw.ats.entities.Application/applicationId}"/>
+
                     Job ID: <xsl:value-of select="unsw.ats.entities.Application/job/jobId" /> <br/>
                     Job Title: <xsl:value-of select="unsw.ats.entities.Application/job/jobTitle" /> <br/>
-                    <input type="hidden" name="id">
-                        <xsl:attribute name="value">
-                            <xsl:value-of select="unsw.ats.entities.Application/applicationId" />
-                        </xsl:attribute>
-                    </input>
-                    Brief Bio:
-                    <input type="text" name="briefBio">
-                        <xsl:attribute name="value">
-                            <xsl:value-of select="unsw.ats.entities.Application/briefBio" />
-                        </xsl:attribute>
-                    </input> <br/>
-                    Expect Salary:
-                    <input type="text" name="salary">
-                        <xsl:attribute name="value">
-                            <xsl:value-of select="unsw.ats.entities.Application/salary" />
-                        </xsl:attribute>
-                    </input> <br/>
+                    Job Desc: <xsl:value-of select="unsw.ats.entities.Application/job/jobDesc" /> <br/>
+                    <hr/>
+                    Application ID: <xsl:value-of select="unsw.ats.entities.Application/applicationId" /> <br/>
+                    Applicant Name: <xsl:value-of select="unsw.ats.entities.Application/applicant/applicantName" /> <br/>
+                    Brief Bio: <xsl:value-of select="unsw.ats.entities.Application/briefBio" /> <br/>
+                    Expect Salary: <xsl:value-of select="unsw.ats.entities.Application/salary" /> <br/>
+                    <hr/>
+                    Decision:
+                    <select name="decision">
+                        <option value="true">accepted</option>
+                        <option value="false">discard</option>
+                    </select>
+                    <br/>
+                    Recommendation:
+                    <input type="text" name="recommendation" />
+                    <br/>
                     <input type="submit" title="Submit"/>
                 </form>
             </body>
