@@ -11,8 +11,8 @@
     <!-- Default bean name is 'mongo' -->
     <mongo:mongo host="staff.mongohq.com" port="10029"/>
 
-    <!--<mongo:db-factory id="mongoDbFactory" host="staff.mongohq.com" port="10029" dbname="ats" username="foo" password="bar"/>-->
-    <mongo:db-factory id="mongoDbFactory" host="localhost" port="27017" dbname="ats"/>
+    <mongo:db-factory id="mongoDbFactory" host="staff.mongohq.com" port="10029" dbname="ats" username="foo" password="bar"/>
+    <!--<mongo:db-factory id="mongoDbFactory" host="localhost" port="27017" dbname="ats"/>-->
 
     <!-- Offers convenience methods and automatic mapping between MongoDB JSON documents and your domain classes. -->
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
