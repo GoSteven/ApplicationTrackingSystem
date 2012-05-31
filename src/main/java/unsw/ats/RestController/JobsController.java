@@ -100,7 +100,7 @@ public class JobsController extends ControllerBase {
         job  = service.create(job);
 
         return Response.status(200)
-                .entity("<create><status>success</status><jobId>" + job.getJobId() + "</jobId></create>")
+                .entity(job.getJobId())
                 .build();
     }
 

@@ -51,6 +51,7 @@ public class ApplicationService {
             return null;
         existingApplication.setReviewer1IsAccepted(application.getReviewer1IsAccepted());
         existingApplication.setReviewer1Recommendations(application.getReviewer1Recommendations());
+        existingApplication.setStatus(application.getStatus());
         return applicationRepository.save(existingApplication);
     }
 
@@ -60,6 +61,7 @@ public class ApplicationService {
             return null;
         existingApplication.setReviewer2IsAccepted(application.getReviewer2IsAccepted());
         existingApplication.setReviewer2Recommendations(application.getReviewer2Recommendations());
+        existingApplication.setStatus(application.getStatus());
         return applicationRepository.save(existingApplication);
     }
 

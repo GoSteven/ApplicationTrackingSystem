@@ -42,13 +42,19 @@
                                 </a>
                             </xsl:if>
                             <xsl:if test="status='final decision made'">
-                                Closed: <xsl:value-of select="finalIsAccepted" />
+                                Closed:
+                                <xsl:if test="finalIsAccepted='true'" >
+                                    Accepted
+                                </xsl:if>
+                                <xsl:if test="finalIsAccepted='false'" >
+                                    Rejected
+                                </xsl:if>
                             </xsl:if>
 
 
 
                         </td>
-                                                                   b8af6b41-0fda-495a-8deb-af539dddbe90
+
                         <!--<td> <a href=controller?scope=editApplication&id=<xsl:value-of select="job/jobId"/> >Edit Application</xsl:value-of> </td>-->
                     </tr>
                     </xsl:for-each>

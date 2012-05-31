@@ -22,14 +22,28 @@
                         <td><xsl:value-of select="salary" /></td>
                         <td><xsl:value-of select="status" /></td>
                         <td>
-                            <a href="controller?scope=viewAllJobs">
+                            <a href="controller?scope=viewJob&amp;id={job/jobId}">
                                 <xsl:value-of select="job/jobTitle" />
                             </a>
                         </td>
                         <td>
-                            <a href="controller?scope=editApplication&amp;id={applicationId}">
-                                Edit
-                            </a>
+                            <xsl:if test="status='application received'">
+                                <a href="controller?scope=editApplication&amp;id={applicationId}">
+                                    Edit
+                                </a>
+                                <a href="controller?scope=withdraw&amp;id={applicationId}">
+                                    Withdraw
+                                </a>
+                            </xsl:if>
+                            <xsl:if test="status='final decision made'">
+                                Closed:
+                                <xsl:if test="finalIsAccepted='true'" >
+                                    Accepted
+                                </xsl:if>
+                                <xsl:if test="finalIsAccepted='false'" >
+                                    Rejected
+                                </xsl:if>
+                            </xsl:if>
                         </td>
 
                         <!--<td> <a href=controller?scope=editApplication&id=<xsl:value-of select="job/jobId"/> >Edit Application</xsl:value-of> </td>-->

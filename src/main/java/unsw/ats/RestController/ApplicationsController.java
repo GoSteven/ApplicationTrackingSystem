@@ -1,6 +1,7 @@
 package unsw.ats.RestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 import unsw.ats.MongoService.*;
 import unsw.ats.adapter.XmlAdapter;
@@ -27,6 +28,9 @@ public class ApplicationsController extends ControllerBase {
     private ApplicationService applicationService;
     @Autowired
     private JobService jobService;
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
     @Autowired
     private ApplicantService applicantService;
 
@@ -73,7 +77,7 @@ public class ApplicationsController extends ControllerBase {
         application.setStatus(Const.receivedStatus);
         application = applicationService.create(application);
         return Response.status(200)
-                .entity("<create><status>success</status><applicationId>" + application.getApplicationId() + "</applicationId></create>")
+                .entity(application.getApplicationId())
                 .build();
     }
 
@@ -121,6 +125,9 @@ public class ApplicationsController extends ControllerBase {
         List<Application> applications = applicationService.readAll();
         List<Application> myApplications = new ArrayList<Application>();
         for (Application application : applications) {
+            if(application.getStatus().equals(Const.finalStatus)){
+                continue;
+            }
             if (userId.equals(application.getApplicant().getApplicantId())) {
             /* For applicants, display his applications*/
                 myApplications.add(application);
@@ -269,7 +276,7 @@ public class ApplicationsController extends ControllerBase {
         if(application.getReviewer1().getId().equals(reviewerId)){
             application.setReviewer1IsAccepted(decision);
             application.setReviewer1Recommendations(recommendation);
-            if(!(application.getReviewer2() == null)){
+            if(!(application.getReviewer2IsAccepted() == null)){
                 application.setStatus(Const.decisionStatus);
             }
             applicationService.review1(application);
@@ -277,7 +284,7 @@ public class ApplicationsController extends ControllerBase {
         }else if(application.getReviewer2().getId().equals(reviewerId)){
             application.setReviewer2IsAccepted(decision);
             application.setReviewer2Recommendations(recommendation);
-            if(!(application.getReviewer1() == null)){
+            if(!(application.getReviewer2IsAccepted() == null)){
                 application.setStatus(Const.decisionStatus);
             }
             applicationService.review2(application);
@@ -289,7 +296,7 @@ public class ApplicationsController extends ControllerBase {
         }
     }
 
-    @DELETE
+    @GET
     @Path("/delete")
     @Produces(MediaType.APPLICATION_XML)
     public Response delete(
@@ -301,8 +308,13 @@ public class ApplicationsController extends ControllerBase {
             return Response.status(401).entity("Unauthorized").build();
         }
         //TODO: delete
+        Application application = applicationService.findById(id);
+        if(application == null){
+            return Response.status(412).entity("application not exist").build();
+        }
+        mongoTemplate.remove(application, "application");
         return Response.status(200)
-                .entity("TODO: return if successful")
+                .entity("Delete success.")
                 .build();
     }
 

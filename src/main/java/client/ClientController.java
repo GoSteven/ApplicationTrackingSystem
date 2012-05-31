@@ -65,7 +65,9 @@ public class ClientController extends HttpServlet {
             if (clientResponse.getStatus() == 200) {
                 request.setAttribute("successMessage", "Job Created successfully");
                 //TODO: linkToNewJob
-                request.setAttribute("successHtml", "linkToNewJob");
+                String newJobId = clientResponse.getEntity(String.class);
+                request.setAttribute("successHtml", "controller?scope=viewJob&id=" + newJobId);
+                request.setAttribute("linkName", "View Job Details");
                 request.getRequestDispatcher("success.jsp").forward(request, response);
             } else {
                 request.setAttribute("errorMessage", "Job Creation failed");
@@ -106,9 +108,11 @@ public class ClientController extends HttpServlet {
             Map<String, String[]> parameterMap = request.getParameterMap();
             ClientResponse clientResponse = submitRequest(SERVICE_ADDRESS + "applications/" + userId + "/create", parameterMap, "post");
             if (clientResponse.getStatus() == 200) {
+                String applicationId = clientResponse.getEntity(String.class);
                 request.setAttribute("successMessage", "Application Created successfully");
                 //TODO: linkToNewApplication
-                request.setAttribute("successHtml", "linkToNewApplication");
+                request.setAttribute("successHtml", "controller?scope=applicationDetail&id=" + applicationId);
+                request.setAttribute("linkName", "view my applications");
                 request.getRequestDispatcher("success.jsp").forward(request, response);
             } else {
                 request.setAttribute("errorMessage", "Application Creation failed: " + clientResponse.getEntity(String.class));
@@ -138,7 +142,20 @@ public class ClientController extends HttpServlet {
                 request.setAttribute("errorMessage", "Get application Failed: " + clientResponse.getEntity(String.class));
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
-        } else if ("updateApplication".equals(scope)) {
+        }else if("withdraw".equals(scope)){
+            String applicationId = request.getParameter("id");
+            Client client = Client.create();
+            WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/delete?id=" + applicationId);
+            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+            if (clientResponse.getStatus() == 200) {
+                response.sendRedirect("controller?scope=myApplications");
+                return;
+            } else {
+                request.setAttribute("errorMessage", "Delete application Failed: " + clientResponse.getEntity(String.class));
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+        }
+        else if ("updateApplication".equals(scope)) {
             Map<String, String[]> parameterMap = request.getParameterMap();
             ClientResponse clientResponse = submitRequest(SERVICE_ADDRESS + "applications/" + userId + "/update", parameterMap, "put");
             if (clientResponse.getStatus() == 200) {
@@ -208,7 +225,7 @@ public class ClientController extends HttpServlet {
             ClientResponse clientResponse = submitRequest(SERVICE_ADDRESS + "applications/" + userId + "/assign", parameterMap, "post");
 //            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).post(ClientResponse.class);
             if (clientResponse.getStatus() == 200) {
-                request.setAttribute("successMessage", "Application Created successfully");
+                request.setAttribute("successMessage", "Application assigned successfully");
                 //TODO: linkToNewApplication
                 request.setAttribute("successHtml", "linkToNewApplication");
                 request.getRequestDispatcher("success.jsp").forward(request, response);
@@ -223,13 +240,34 @@ public class ClientController extends HttpServlet {
             if (clientResponse.getStatus() == 200) {
                 request.setAttribute("successMessage", "Application reviewed successfully");
                 //TODO: linkToNewApplication
-                request.setAttribute("successHtml", "linkToNewApplication");
+                request.setAttribute("successHtml", "controller?scope=applicationsToBeReviewed");
+                request.setAttribute("linkName", "Back to review list");
                 request.getRequestDispatcher("success.jsp").forward(request, response);
             } else {
                 request.setAttribute("errorMessage", "Application review failed: " + clientResponse.getEntity(String.class));
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
-        } else if("final".equals(scope)){
+        } else if("applicationDetail".equals(scope)){
+            String applicationId = request.getParameter("id");
+            if (applicationId == null || applicationId.trim().equals("")) {
+                request.setAttribute("errorMessage", "Application update failed: ");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+            Client client = Client.create();
+            WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/detail?id=" + applicationId);
+            ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+            if (clientResponse.getStatus() == 200) {
+                String applicationXML = clientResponse.getEntity(String.class);
+                request.setAttribute("applicationXML", applicationXML);
+                request.getRequestDispatcher("application.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "Get application Failed: " + clientResponse.getEntity(String.class));
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+            client.destroy();
+
+        }
+        else if("final".equals(scope)){
             String applicationId = request.getParameter("id");
             if (applicationId == null || applicationId.trim().equals("")) {
                 request.setAttribute("errorMessage", "Application update failed: ");
@@ -255,6 +293,8 @@ public class ClientController extends HttpServlet {
                 request.setAttribute("successMessage", "Application reviewed successfully");
                 request.setAttribute("successHtml", "linkToNewApplication");
                 request.getRequestDispatcher("success.jsp").forward(request, response);
+//                response.sendRedirect("controller?scope=applicationsToMyJobs");
+                return;
             } else {
                 request.setAttribute("errorMessage", "Application review failed: " + clientResponse.getEntity(String.class));
                 request.getRequestDispatcher("error.jsp").forward(request, response);
