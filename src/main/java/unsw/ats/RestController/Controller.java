@@ -99,6 +99,8 @@ public class Controller {
         jobObjectiveC.setJobTitle("jobObjectiveC");
         jobObjectiveC.setJobDesc("This is a Objective C, iOS job");
         jobObjectiveC.setClosingDate(cal);
+        jobObjectiveC.setLocation("Sydney CBD");
+        jobObjectiveC.setSalary(100);
         jobObjectiveC.setRecuriter(recuriter1);
 
         Job jobPython = new Job();

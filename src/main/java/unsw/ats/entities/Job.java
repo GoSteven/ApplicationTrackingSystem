@@ -24,11 +24,12 @@ public class Job {
     private float salary;
     private String location;
     private Calendar closingDate;
+
     /**
      *  status = 1  job open
      *  status = 0  job closed
      */
-    private boolean status;
+    private String status;
 
 
 
@@ -87,13 +88,24 @@ public class Job {
 
     public void setClosingDate(Calendar closingDate) {
         this.closingDate = closingDate;
+        if (Calendar.getInstance().after(closingDate))
+            status = "Closed";
+        else
+            status = "Open";
     }
 
-    public boolean isStatus() {
-        return status;
+    public String getStatus() {
+        if (closingDate != null) {
+            if (Calendar.getInstance().after(closingDate))
+                return "Closed";
+        }
+
+        return "Open";
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
+
+
 }

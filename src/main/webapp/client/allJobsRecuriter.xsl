@@ -4,7 +4,6 @@
         <html>
             <body>
                 <h2>All jobs</h2>
-
                 <table border="1">
                     <tr bgcolor="#9acd32">
                         <th>jobId</th>
@@ -14,7 +13,7 @@
                         <th>Location</th>
                         <th>Salary</th>
                         <th>Status</th>
-                        <th>Apply</th>
+                        <th>Applications</th>
                     </tr>
                     <xsl:for-each select="list/unsw.ats.entities.Job">
                     <tr>
@@ -26,8 +25,8 @@
                         <td><xsl:value-of select="salary" /></td>
                         <td><xsl:value-of select="status" /></td>
                         <td>
-                            <a href="controller?scope=apply&amp;jobId={jobId}">
-                                Apply
+                            <a href="controller?scope=applicationsToMyJobs&amp;jobId={jobId}">
+                                Applicaitons to this job
                             </a>
                         </td>
                     </tr>

@@ -54,9 +54,15 @@ public class ClientController extends HttpServlet {
         if ("init".equals(scope)) {
         /* Init */
             String userType = (String)request.getParameter("userType");
+            session.setAttribute("userType", userType);
             response.sendRedirect("controller?scope=" + userType);
         } else if ("recuriter".equals(scope) || "reviewer".equals(scope) || "applicant".equals(scope)) {
             request.getRequestDispatcher(scope + ".jsp").forward(request, response);
+        }
+        else if ("apply".equals(scope)) {
+            String jobId = request.getParameter("jobId");
+            request.setAttribute("jobId", jobId);
+            request.getRequestDispatcher("apply.jsp").forward(request, response);
         }
         else if ("createJob".equals(scope)) {
         /* create job */
@@ -76,12 +82,34 @@ public class ClientController extends HttpServlet {
         } else if ("viewAllJobs".equals(scope)) {
         /* View all jobs */
             Client client = Client.create();
-            WebResource webResource = client.resource(SERVICE_ADDRESS + "jobs/" + userId + "/all");
+            String queryParam = "?";
+            String title = request.getParameter("title");
+            String from = request.getParameter("from");
+            String to = request.getParameter("to");
+            String location = request.getParameter("location");
+            String state = request.getParameter("state");
+
+
+            if (title != null && !title.trim().equals(""))
+                queryParam += "title=" + title.trim() + "&";
+            if (from != null && !from.trim().equals(""))
+                queryParam += "from=" + from.trim() + "&";
+            if (to != null && !to.trim().equals(""))
+                queryParam += "to=" + to.trim() + "&";
+            if (location != null && !location.trim().equals(""))
+                queryParam += "location=" + location.trim() + "&";
+            if (state != null && !state.trim().equals(""))
+                queryParam += "state=" + state.trim();
+            WebResource webResource = client.resource(SERVICE_ADDRESS + "jobs/" + userId + "/all" + queryParam);
             ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
             if (clientResponse.getStatus() == 200) {
                 String allJobsXML = clientResponse.getEntity(String.class);
                 request.setAttribute("allJobsXML", allJobsXML);
-                request.getRequestDispatcher("allJobs.jsp").forward(request, response);
+                if (session.getAttribute("userType").equals("recuriter")) {
+                    request.getRequestDispatcher("allJobsRecuriter.jsp").forward(request, response);
+                } else {
+                    request.getRequestDispatcher("allJobs.jsp").forward(request, response);
+                }
             } else {
                 request.setAttribute("errorMessage", "Get all jobs Failed: " + clientResponse.toString());
                 request.getRequestDispatcher("error.jsp").forward(request, response);
@@ -118,7 +146,8 @@ public class ClientController extends HttpServlet {
             }
         } else if ("myApplications".equals(scope)) {
         /* my applications */
-            String myApplicationsXML = getMyApplications(userId, request, response);
+            String jobId = request.getParameter("jobId");
+            String myApplicationsXML = getMyApplications(userId, jobId, request, response);
             if (myApplicationsXML.length() > 0) {
                 request.setAttribute("myApplicationsXML", myApplicationsXML);
                 request.getRequestDispatcher("myApplications.jsp").forward(request, response);
@@ -167,7 +196,8 @@ public class ClientController extends HttpServlet {
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
         } else if ("applicationsToMyJobs".equals(scope)) {
-            String myApplicationsXML = getMyApplications(userId, request, response);
+            String jobId = request.getParameter("jobId");
+            String myApplicationsXML = getMyApplications(userId, jobId, request, response);
             if (myApplicationsXML.length() > 0) {
                 request.setAttribute("myApplicationsXML", myApplicationsXML);
                 request.getRequestDispatcher("ApplicationsToMyJobs.jsp").forward(request, response);
@@ -192,7 +222,8 @@ public class ClientController extends HttpServlet {
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
         } else if ("applicationsToBeReviewed".equals(scope)) {
-            String myApplicationsXML = getMyApplications(userId, request, response);
+            String jobId = request.getParameter("jobId");
+            String myApplicationsXML = getMyApplications(userId, jobId, request, response);
             if (myApplicationsXML.length() > 0) {
                 request.setAttribute("myApplicationsXML", myApplicationsXML);
                 request.getRequestDispatcher("applicationsToReview.jsp").forward(request, response);
@@ -320,11 +351,12 @@ public class ClientController extends HttpServlet {
 
     private String getMyApplications(
             String userId,
+            String jobId,
             HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException {
         String returnXML = "";
         Client client = Client.create();
-        WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/myApplications");
+        WebResource webResource = client.resource(SERVICE_ADDRESS + "applications/" + userId + "/myApplications?jobId=" + jobId);
         ClientResponse clientResponse = webResource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
         if (clientResponse.getStatus() == 200) {
             returnXML = clientResponse.getEntity(String.class);

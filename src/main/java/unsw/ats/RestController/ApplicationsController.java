@@ -117,7 +117,8 @@ public class ApplicationsController extends ControllerBase {
     @Path("/myApplications")
     @Produces(MediaType.APPLICATION_XML)
     public Response myApplications(
-            @PathParam("userId") String userId
+            @PathParam("userId") String userId,
+            @QueryParam("jobId") String jobId
     ) {
         if (!validate(userId, 4 + 2 + 1)) {
             return Response.status(401).entity("Unauthorized").build();
@@ -133,6 +134,9 @@ public class ApplicationsController extends ControllerBase {
                 myApplications.add(application);
             } else if (userId.equals(application.getJob().getRecuriter().getUserId())) {
             /* For Recuriters, display the applications, which apply for his job */
+                if (jobId != null && !jobId.trim().equals("") && !jobId.trim().equals("null") && !application.getJob().getJobId().equals(jobId)) {
+                    continue;
+                }
                 myApplications.add(application);
             } else if (
             /* For Reviewers, display the applications assigned to him */
@@ -303,11 +307,9 @@ public class ApplicationsController extends ControllerBase {
             @PathParam("userId") String userId,
             @QueryParam("id") String id
     ) {
-//        TODO: who can delete an application
         if (!validate(userId, 4)) {
             return Response.status(401).entity("Unauthorized").build();
         }
-        //TODO: delete
         Application application = applicationService.findById(id);
         if(application == null){
             return Response.status(412).entity("application not exist").build();

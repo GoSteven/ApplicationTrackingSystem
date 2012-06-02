@@ -87,15 +87,16 @@ public class JobsController extends ControllerBase {
         job.setSalary(salary);
         DateFormat formatter;
         Date date;
-        formatter = new SimpleDateFormat("dd-MMM-yyyy");
-        date = (Date) formatter.parse(closingDate);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        job.setClosingDate(cal);
+        try {
+            formatter = new SimpleDateFormat("dd-MMM-yyyy");
+            date = (Date) formatter.parse(closingDate);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            job.setClosingDate(cal);
+        } catch (ParseException ex) {
+            return Response.status(412).entity("Close data format not correct.").build();
+        }
         job.setLocation(location);
-        http:
-//www.youtube.com/watch?v=ir-tZS3TaxM&ob=av3e
-        job.setStatus(true);
         Recuriter recuriter = findRecuriter(userId);
         if (recuriter == null) {
             return Response.status(412).entity("No such recuriter").build();
@@ -154,8 +155,9 @@ public class JobsController extends ControllerBase {
     public Response all(
             @PathParam("userId") String userId,
             @QueryParam(value = "title") String title,
-            @QueryParam(value = "from") String from,
-            @QueryParam(value = "to") String to,
+            @QueryParam(value = "from") Float from,
+            @QueryParam(value = "to") Float to,
+            @QueryParam(value = "location") String location,
             @QueryParam(value = "state") String state
     ) throws XPathExpressionException, ParserConfigurationException, IOException, SAXException {
         if (!validate(userId, 7)) {
@@ -164,10 +166,39 @@ public class JobsController extends ControllerBase {
         List<Job> allJobs = service.readAll();
         List<Job> shownJob = new ArrayList<Job>();
         for (Job job : allJobs) {
-            if (job.getClosingDate().after(Calendar.getInstance())) {
-                shownJob.add(job);
+            /* filters */
+            if (title != null &&
+                    (job.getJobTitle() == null ||
+                            !job.getJobTitle().toLowerCase().contains(title.trim().toLowerCase()))) {
+                continue;
             }
+            if (from != null && job.getSalary() < from) {
+                continue;
+            }
+            if (to != null && job.getSalary() > to) {
+                continue;
+            }
+            if (location != null &&
+                    (job.getLocation() == null ||
+                            !job.getLocation().toLowerCase().contains(location.trim().toLowerCase()))) {
+                continue;
+            }
+            if (job.getClosingDate() != null) {
+                if (job.getClosingDate().after(Calendar.getInstance())) {
+                    if ("Closed".equals(state)){
+                        continue;
+                    } else {
+                    }
+                } else {
+                    if ("Closed".equals(state)){
+                    } else {
+                        continue;
+                    }
+                }
+            }
+            shownJob.add(job);
         }
+
         String jobsXml = XmlAdapter.getJobsXML(shownJob);
         //TODO: search for the jobs
         //http://www.ibm.com/developerworks/xml/library/x-xjavaxquery/
@@ -177,57 +208,57 @@ public class JobsController extends ControllerBase {
 
     }
 
-    @GET
-    @Path("/search")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response search(
-            @QueryParam("searchKey") String searchKey,
-            @QueryParam("searchValue") String searchValue
-    ) {
-
-        List<Job> allJobs = service.readAll();
-        List<Job> selectedJobs = new ArrayList<Job>();
-        if (searchKey.equals(Const.title)) {
-            for (Job j : allJobs) {
-                if (j.getJobTitle().equals(searchValue)) {
-                    selectedJobs.add(j);
-                }
-            }
-        } else if (searchKey.equals(Const.location)) {
-            for (Job j : allJobs) {
-                if (j.getLocation().equals(searchValue)) {
-                    selectedJobs.add(j);
-                }
-
-            }
-        } else if (searchKey.equals(Const.recuriterName)) {
-            for (Job j : allJobs) {
-                if (j.getRecuriter().getRecruiterName().equals(searchValue)) {
-                    selectedJobs.add(j);
-                }
-            }
-        } else if (searchKey.equals(Const.salary)) {
-            float lowBound = Float.valueOf(searchValue.split("-")[0]);
-            float upBound = Float.valueOf(searchValue.split("-")[1]);
-            for (Job j : allJobs) {
-                if (j.getSalary() > lowBound && j.getSalary() < upBound) {
-                    selectedJobs.add(j);
-                }
-            }
-        } else if (searchKey.equals(Const.status)) {
-            boolean status = searchValue.equals("open");
-            for (Job j : allJobs) {
-                if (j.isStatus() == status) {
-                    selectedJobs.add(j);
-                }
-            }
-
-        }
-        return Response.status(200)
-                .entity(selectedJobs)
-                .build();
-
-    }
+//    @GET
+//    @Path("/search")
+//    @Produces(MediaType.APPLICATION_XML)
+//    public Response search(
+//            @QueryParam("searchKey") String searchKey,
+//            @QueryParam("searchValue") String searchValue
+//    ) {
+//
+//        List<Job> allJobs = service.readAll();
+//        List<Job> selectedJobs = new ArrayList<Job>();
+//        if (searchKey.equals(Const.title)) {
+//            for (Job j : allJobs) {
+//                if (j.getJobTitle().equals(searchValue)) {
+//                    selectedJobs.add(j);
+//                }
+//            }
+//        } else if (searchKey.equals(Const.location)) {
+//            for (Job j : allJobs) {
+//                if (j.getLocation().equals(searchValue)) {
+//                    selectedJobs.add(j);
+//                }
+//
+//            }
+//        } else if (searchKey.equals(Const.recuriterName)) {
+//            for (Job j : allJobs) {
+//                if (j.getRecuriter().getRecruiterName().equals(searchValue)) {
+//                    selectedJobs.add(j);
+//                }
+//            }
+//        } else if (searchKey.equals(Const.salary)) {
+//            float lowBound = Float.valueOf(searchValue.split("-")[0]);
+//            float upBound = Float.valueOf(searchValue.split("-")[1]);
+//            for (Job j : allJobs) {
+//                if (j.getSalary() > lowBound && j.getSalary() < upBound) {
+//                    selectedJobs.add(j);
+//                }
+//            }
+//        } else if (searchKey.equals(Const.status)) {
+//            boolean status = searchValue.equals("open");
+//            for (Job j : allJobs) {
+//                if (j.isStatus() == status) {
+//                    selectedJobs.add(j);
+//                }
+//            }
+//
+//        }
+//        return Response.status(200)
+//                .entity(selectedJobs)
+//                .build();
+//
+//    }
 
     private Recuriter findRecuriter(String userId) {
         for (Recuriter r : recuriterService.readAll()) {

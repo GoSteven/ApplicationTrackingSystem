@@ -21,6 +21,7 @@
                             <td><xsl:value-of select="//jobDesc" /></td>
                             <td><xsl:value-of select="//salary" /></td>
                             <td><xsl:value-of select="//status" /></td>
+
                         </tr>
                     <!--</xsl:for-each>-->
 
