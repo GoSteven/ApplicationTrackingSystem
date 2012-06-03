@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -91,13 +92,13 @@ public class ClientController extends HttpServlet {
 
 
             if (title != null && !title.trim().equals(""))
-                queryParam += "title=" + title.trim() + "&";
+                queryParam += "title=" + URLEncoder.encode(title.trim()) + "&";
             if (from != null && !from.trim().equals(""))
                 queryParam += "from=" + from.trim() + "&";
             if (to != null && !to.trim().equals(""))
                 queryParam += "to=" + to.trim() + "&";
             if (location != null && !location.trim().equals(""))
-                queryParam += "location=" + location.trim() + "&";
+                queryParam += "location=" + URLEncoder.encode(location.trim()) + "&";
             if (state != null && !state.trim().equals(""))
                 queryParam += "state=" + state.trim();
             WebResource webResource = client.resource(SERVICE_ADDRESS + "jobs/" + userId + "/all" + queryParam);

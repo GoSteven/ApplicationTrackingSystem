@@ -26,9 +26,12 @@
                         <td><xsl:value-of select="salary" /></td>
                         <td><xsl:value-of select="status" /></td>
                         <td>
-                            <a href="controller?scope=apply&amp;jobId={jobId}">
-                                Apply
-                            </a>
+                            <xsl:if test="status='Open'">
+                                <a href="controller?scope=apply&amp;jobId={jobId}">
+                                    Apply
+                                </a>
+                            </xsl:if>
+
                         </td>
                     </tr>
                     </xsl:for-each>

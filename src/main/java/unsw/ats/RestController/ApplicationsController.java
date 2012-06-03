@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: yousilin
- * Date: 13/05/12
- * Time: 5:05 PM
- * To change this template use File | Settings | File Templates.
- */
+* Created with IntelliJ IDEA.
+* User: yousilin
+* Date: 13/05/12
+* Time: 5:05 PM
+* To change this template use File | Settings | File Templates.
+*/
 @Component
 @Path("/applications/{userId: [^/]*}") /*make userId can be empty*/
 public class ApplicationsController extends ControllerBase {
@@ -62,8 +62,11 @@ public class ApplicationsController extends ControllerBase {
         application.setApplicant(applicant);
         application.setApplicationId(userId);
         Job job = jobService.findById(jobId);
-        if (applicant == null) {
+        if (job == null) {
             return Response.status(412).entity("No such job").build();
+        }
+        if (job.getStatus().equals("Closed")) {
+            return Response.status(412).entity("Job closed").build();
         }
         /* cannot apply to the same job twice */
         for (Application a : applicationService.readAll()) {
@@ -126,9 +129,9 @@ public class ApplicationsController extends ControllerBase {
         List<Application> applications = applicationService.readAll();
         List<Application> myApplications = new ArrayList<Application>();
         for (Application application : applications) {
-            if(application.getStatus().equals(Const.finalStatus)){
-                continue;
-            }
+//            if(application.getStatus().equals(Const.finalStatus)){
+//                continue;
+//            }
             if (userId.equals(application.getApplicant().getApplicantId())) {
             /* For applicants, display his applications*/
                 myApplications.add(application);
