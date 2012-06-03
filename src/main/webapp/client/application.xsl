@@ -25,7 +25,7 @@
                                 <xsl:value-of select="//briefBio"/>
                             </td>
                             <td>
-                                <xsl:value-of select="//salary"/>
+                                <xsl:value-of select="//unsw.ats.entities.Application/salary"/>
                             </td>
                             <td>
                                 <xsl:value-of select="//status"/>
